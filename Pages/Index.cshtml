@@ -21,36 +21,267 @@
 
 <div class="header">
     <h1>Welcome to MRM Studios</h1>
-    <p>Professional Photography Portfolio</p>
+    <p>Capturing timeless moments with creativity and passion.</p>
 </div>
-
 
 <section id="portfolio">
     <h2>My Portfolio</h2>
-    <div class="gallery">
-        <div class="gallery-item">
-            <img src="event.jpg" alt="Photo 1">
-            <div class="caption">Event Photography</div>
-        </div>
-        <div class="gallery-item">
-            <img src="coporate.jpg" alt="Photo 2">
-            <div class="caption">Corporate Photography</div>
-        </div>
-        <div class="gallery-item">
-            <img src="wedding.jpg" alt="Photo 3">
-            <div class="caption">Wedding Photography</div>
-        </div>
+
+    <!-- Add Photos Button -->
+    <div class="upload-controls">
+        <input type="file" id="fileInput" accept="image/*" multiple hidden>
+        <button id="addPhotosBtn">+ Add Photos</button>
+    </div>
+
+    <div class="gallery" id="gallery">
+        <!-- Images will load here -->
     </div>
 </section>
 
+<!-- Lightbox Modal -->
+<div id="lightbox" class="lightbox">
+    <span class="close">&times;</span>
+    <img class="lightbox-content" id="lightbox-img">
+    <div class="caption" id="lightbox-caption"></div>
+</div>
+
+<script>
+    const jsonUrl = '@Url.Content("~/images.json")';
+
+    fetch(jsonUrl)
+        .then(res => res.ok ? res.json() : [])
+        .then(images => loadGallery(images))
+        .catch(err => console.error("Error loading images:", err));
+
+    function loadGallery(images) {
+        const gallery = document.getElementById("gallery");
+        gallery.innerHTML = "";
+        if (!images || images.length === 0) {
+            gallery.innerHTML = "<p style='color:gray;'>No images in the portfolio yet.</p>";
+            return;
+        }
+
+        images.forEach(img => {
+            const div = document.createElement("div");
+            div.className = "gallery-item";
+            div.innerHTML = `
+                <img src="${img.src}" alt="${img.caption || 'Portfolio Image'}">
+                <div class="caption">${img.caption || ''}</div>
+            `;
+            div.addEventListener("click", () => openLightbox(img.src, img.caption));
+            gallery.appendChild(div);
+        });
+    }
+
+    // Add photos from local device
+    const addPhotosBtn = document.getElementById("addPhotosBtn");
+    const fileInput = document.getElementById("fileInput");
+
+    addPhotosBtn.addEventListener("click", () => fileInput.click());
+
+    fileInput.addEventListener("change", (event) => {
+        const files = event.target.files;
+        if (!files.length) return;
+        const gallery = document.getElementById("gallery");
+
+        for (const file of files) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const div = document.createElement("div");
+                div.className = "gallery-item";
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="${file.name}">
+                    <div class="caption">${file.name}</div>
+                `;
+                div.addEventListener("click", () => openLightbox(e.target.result, file.name));
+                gallery.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Lightbox functions
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const lightboxCaption = document.getElementById("lightbox-caption");
+    const closeBtn = document.querySelector(".close");
+
+    function openLightbox(src, caption) {
+        lightbox.style.display = "flex";
+        lightboxImg.src = src;
+        lightboxCaption.textContent = caption || "";
+    }
+
+    closeBtn.onclick = () => (lightbox.style.display = "none");
+    lightbox.onclick = (e) => {
+        if (e.target === lightbox) lightbox.style.display = "none";
+    };
+</script>
 
 <section id="about">
     <h2>About Me</h2>
-    <p>Hi! I'm Melvyn, a professional photographer specializing in weddings, events, and corporate shoots. I love capturing moments that tell a story.</p>
+    <p>
+        Hi! I'm Melvyn, a professional photographer specializing in weddings, events, and corporate shoots.
+        I believe every image should tell a story, evoke emotion, and preserve timeless beauty.
+    </p>
 </section>
+
 <section id="contact">
     <h2>Contact Me</h2>
     <p>Email: <a href="mailto:mel.dimplz@gmail.com">mel.dimplz@gmail.com</a></p>
     <p>Phone: +123 456 7890</p>
 </section>
 
+<style>
+    body {
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        background: #fafafa;
+        margin: 0;
+        color: #333;
+    }
+
+    h1, h2 {
+        color: #1a1a1a;
+    }
+
+    .navbar-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        padding: 15px 30px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 20px;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: #444;
+        transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+        color: #0077b6;
+    }
+
+    .header {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(120deg, #f9f9f9, #ffffff);
+    }
+
+    #portfolio {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .upload-controls {
+        margin-bottom: 25px;
+    }
+
+    #addPhotosBtn {
+        background: #0077b6;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    #addPhotosBtn:hover {
+        background: #005f8a;
+    }
+
+    .gallery {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .gallery-item {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+    }
+
+    .gallery-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .gallery img {
+        width: 300px;
+        height: 220px;
+        object-fit: cover;
+        border-bottom: 1px solid #eee;
+    }
+
+    .caption {
+        padding: 10px;
+        font-size: 14px;
+        color: #555;
+    }
+
+    /* Lightbox styling */
+    .lightbox {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        flex-direction: column;
+    }
+
+    .lightbox-content {
+        max-width: 90%;
+        max-height: 80vh;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        object-fit: contain;
+    }
+
+    .lightbox .caption {
+        color: white;
+        margin-top: 15px;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        font-size: 40px;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .close:hover {
+        color: #ccc;
+    }
+
+    section {
+        max-width: 900px;
+        margin: auto;
+        padding: 60px 20px;
+    }
+
+    #contact a {
+        color: #0077b6;
+    }
+</style>

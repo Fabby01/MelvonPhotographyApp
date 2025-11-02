@@ -5,20 +5,28 @@
       "PackagePath": "staticwebassets\\MelvonPhotographyApp.bundle.scp.css"
     },
     {
-      "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\wwwroot\\coporate.jpg",
-      "PackagePath": "staticwebassets\\coporate.jpg"
-    },
-    {
       "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
-      "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\wwwroot\\event.jpg",
-      "PackagePath": "staticwebassets\\event.jpg"
-    },
-    {
       "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\wwwroot\\images.json",
+      "PackagePath": "staticwebassets\\images.json"
+    },
+    {
+      "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\wwwroot\\images\\coporate.jpg",
+      "PackagePath": "staticwebassets\\images\\coporate.jpg"
+    },
+    {
+      "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\wwwroot\\images\\event.jpg",
+      "PackagePath": "staticwebassets\\images\\event.jpg"
+    },
+    {
+      "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\wwwroot\\images\\wedding.jpg",
+      "PackagePath": "staticwebassets\\images\\wedding.jpg"
     },
     {
       "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\wwwroot\\js\\site.js",
@@ -251,10 +259,6 @@
     {
       "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
-    },
-    {
-      "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\wwwroot\\wedding.jpg",
-      "PackagePath": "staticwebassets\\wedding.jpg"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.MelvonPhotographyApp.Microsoft.AspNetCore.StaticWebAssets.props",
