@@ -1,10 +1,56 @@
 ﻿@page
-@model IndexModel
+@model MelvonPhotographyApp.Pages.IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<header>
+    <div class="navbar-container">
+        <div class="logo">
+            <h1>MRM Studios</h1>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#portfolio">Portfolio</a></li>
+                <li><a href="#about">About Me</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="header">
+    <h1>Welcome to MRM Studios</h1>
+    <p>Professional Photography Portfolio</p>
 </div>
+
+
+<section id="portfolio">
+    <h2>My Portfolio</h2>
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="event.jpg" alt="Photo 1">
+            <div class="caption">Event Photography</div>
+        </div>
+        <div class="gallery-item">
+            <img src="coporate.jpg" alt="Photo 2">
+            <div class="caption">Corporate Photography</div>
+        </div>
+        <div class="gallery-item">
+            <img src="wedding.jpg" alt="Photo 3">
+            <div class="caption">Wedding Photography</div>
+        </div>
+    </div>
+</section>
+
+
+<section id="about">
+    <h2>About Me</h2>
+    <p>Hi! I'm Melvyn, a professional photographer specializing in weddings, events, and corporate shoots. I love capturing moments that tell a story.</p>
+</section>
+<section id="contact">
+    <h2>Contact Me</h2>
+    <p>Email: <a href="mailto:mel.dimplz@gmail.com">mel.dimplz@gmail.com</a></p>
+    <p>Phone: +123 456 7890</p>
+</section>
+

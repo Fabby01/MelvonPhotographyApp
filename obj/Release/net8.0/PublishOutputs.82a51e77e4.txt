@@ -1,0 +1,7 @@
+C:\Users\fabia\Fabiana\Desktop\MelvonPhotographyApp\out\MelvonPhotographyApp.exe
+C:\Users\fabia\Fabiana\Desktop\MelvonPhotographyApp\out\appsettings.Development.json
+C:\Users\fabia\Fabiana\Desktop\MelvonPhotographyApp\out\appsettings.json
+C:\Users\fabia\Fabiana\Desktop\MelvonPhotographyApp\out\MelvonPhotographyApp.dll
+C:\Users\fabia\Fabiana\Desktop\MelvonPhotographyApp\out\MelvonPhotographyApp.deps.json
+C:\Users\fabia\Fabiana\Desktop\MelvonPhotographyApp\out\MelvonPhotographyApp.runtimeconfig.json
+C:\Users\fabia\Fabiana\Desktop\MelvonPhotographyApp\out\MelvonPhotographyApp.pdb
