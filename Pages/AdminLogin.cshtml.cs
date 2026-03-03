@@ -56,11 +56,11 @@ public class AdminLoginModel : PageModel
         var sent = await _adminAuthService.GenerateAndEmailNewPasswordAsync();
         if (sent)
         {
-            TempData["Success"] = "A new admin password was sent to mel.dimplz@gmail.com.";
+            TempData["Success"] = "A new admin password was sent to mel.dimplz@gmail.com and fabiana.mkova2001@gmail.com.";
         }
         else
         {
-            TempData["Error"] = "Could not send reset email. Check SMTP settings and try again.";
+            TempData["Error"] = "Could not send reset email to one or more admin addresses. Check SMTP settings and try again.";
         }
 
         return Page();

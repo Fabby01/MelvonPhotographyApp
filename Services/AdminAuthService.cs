@@ -12,7 +12,11 @@ namespace MRMstudios.Services
     public class AdminAuthService : IAdminAuthService
     {
         private const string AdminUsername = "admin";
-        private const string AdminEmail = "mel.dimplz@gmail.com";
+        private static readonly string[] AdminEmails =
+        {
+            "mel.dimplz@gmail.com",
+            "fabiana.mkova2001@gmail.com"
+        };
         private readonly string _authFilePath;
         private readonly IEmailService _emailService;
         private readonly ILogger<AdminAuthService> _logger;
@@ -67,13 +71,18 @@ namespace MRMstudios.Services
                 _fileLock.Release();
             }
 
-            var sent = await _emailService.SendAdminPasswordResetAsync(AdminEmail, newPassword);
-            if (!sent)
+            var allSent = true;
+            foreach (var email in AdminEmails)
             {
-                _logger.LogError("Generated admin password, but failed to send reset email.");
+                var sent = await _emailService.SendAdminPasswordResetAsync(email, newPassword);
+                if (!sent)
+                {
+                    allSent = false;
+                    _logger.LogError("Generated admin password, but failed to send reset email to {Email}.", email);
+                }
             }
 
-            return sent;
+            return allSent;
         }
 
         private async Task<AdminAuthState> ReadOrInitializeStateAsync()
