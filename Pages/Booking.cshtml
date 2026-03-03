@@ -6,19 +6,20 @@
 
 <div class="booking-hero">
     <div class="container py-5">
-        <h1 class="booking-title">Book Your Photography Session</h1>
-        <p class="booking-subtitle">Select your perfect date and package</p>
+        <h1 class="booking-title">📸 Book Your Photography Session</h1>
+        <p class="booking-subtitle">Choose your service and preferred date - we'll handle the rest</p>
     </div>
 </div>
 
-<div class="container" style="padding-top: 3rem; padding-bottom: 3rem;">
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
     <div class="row justify-content-center">
-        <div class="col-12 col-lg-10">
+        <div class="col-12 col-xl-11">
             
             @if (!string.IsNullOrEmpty(Model.Message))
             {
                 <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 1.5rem;">
-                    <strong>✓ Success!</strong> @Model.Message
+                    <div><strong>✓ Booking Successful!</strong></div>
+                    <div>@Model.Message</div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
@@ -26,18 +27,19 @@
             @if (!string.IsNullOrEmpty(Model.Error))
             {
                 <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 1.5rem;">
-                    <strong>✕ Error:</strong> @Model.Error
+                    <div><strong>✕ Booking Error</strong></div>
+                    <div>@Model.Error</div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
 
-            <div class="row">
+            <div class="booking-layout">
                 <!-- Calendar Section -->
-                <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="booking-calendar-section">
                     <div class="calendar-container">
                         <div class="calendar-header">
                             <button id="prevMonth" class="calendar-nav-btn">&larr;</button>
-                            <h3 id="currentMonth" style="flex: 1; text-align: center; margin: 0; font-size: 1.2rem; font-weight: 600;"></h3>
+                            <h3 id="currentMonth" style="flex: 1; text-align: center; margin: 0; font-size: 1.1rem; font-weight: 600;"></h3>
                             <button id="nextMonth" class="calendar-nav-btn">&rarr;</button>
                         </div>
                         
@@ -60,7 +62,7 @@
                             </div>
                             <div class="legend-item">
                                 <span class="legend-color unavailable"></span>
-                                <span>Not Available</span>
+                                <span>Unavailable</span>
                             </div>
                             <div class="legend-item">
                                 <span class="legend-color selected"></span>
@@ -71,36 +73,36 @@
                 </div>
 
                 <!-- Booking Form Section -->
-                <div class="col-lg-6">
+                <div class="booking-form-section">
                     <form method="post" class="booking-form">
                         
                         <!-- Contact Information Section -->
                         <div class="form-section">
-                            <h3 class="section-title">Contact Information</h3>
+                            <h3 class="section-title">👤 Contact Information</h3>
                             <div class="form-grid-2">
                                 <div>
                                     <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
-                                    <input type="text" class="form-control" id="fullName" asp-for="Booking.FullName" placeholder="Your full name" required>
+                                    <input type="text" class="form-control" id="fullName" asp-for="Booking.FullName" placeholder="John Doe" required>
                                     <span asp-validation-for="Booking.FullName" class="text-danger" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
                                 </div>
 
                                 <div>
                                     <label for="email" class="form-label">Email Address <span class="required">*</span></label>
-                                    <input type="email" class="form-control" id="email" asp-for="Booking.Email" placeholder="your@email.com" required>
+                                    <input type="email" class="form-control" id="email" asp-for="Booking.Email" placeholder="john@example.com" required>
                                     <span asp-validation-for="Booking.Email" class="text-danger" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
                                 </div>
                             </div>
 
                             <div style="margin-top: 1rem;">
                                 <label for="phone" class="form-label">Phone Number <span class="required">*</span></label>
-                                <input type="tel" class="form-control" id="phone" asp-for="Booking.PhoneNumber" placeholder="+1 (555) 000-0000" required>
+                                <input type="tel" class="form-control" id="phone" asp-for="Booking.PhoneNumber" placeholder="+46 70 841 7437" required>
                                 <span asp-validation-for="Booking.PhoneNumber" class="text-danger" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
                             </div>
                         </div>
 
                         <!-- Session Details Section -->
                         <div class="form-section">
-                            <h3 class="section-title">Session Details</h3>
+                            <h3 class="section-title">📷 Session Details</h3>
                             <div>
                                 <label for="serviceType" class="form-label">Service Type <span class="required">*</span></label>
                                 <select class="form-select" id="serviceType" asp-for="Booking.ServiceType" required>
@@ -116,34 +118,38 @@
                             </div>
 
                             <div style="margin-top: 1rem;">
-                                <label for="preferredDate" class="form-label">Selected Date <span class="required">*</span></label>
+                                <label for="preferredDate" class="form-label">Preferred Session Date <span class="required">*</span></label>
                                 <input type="date" class="form-control" id="preferredDate" asp-for="Booking.PreferredDate" required>
                                 <span asp-validation-for="Booking.PreferredDate" class="text-danger" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
-                                <small style="color: #666; display: block; margin-top: 0.5rem;">Minimum 7 days in advance</small>
+                                <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">⏰ Minimum 7 days in advance</small>
                             </div>
                         </div>
 
                         <!-- Special Requests Section -->
                         <div class="form-section">
-                            <h3 class="section-title">Special Requests</h3>
-                            <label for="specialNotes" class="form-label">Any Special Requests or Notes?</label>
-                            <textarea class="form-control" id="specialNotes" asp-for="Booking.SpecialNotes" rows="3" placeholder="Tell us about your vision, any specific requirements, or special details..."></textarea>
+                            <h3 class="section-title">✨ Special Requests</h3>
+                            <label for="specialNotes" class="form-label">Any Special Requests or Ideas?</label>
+                            <textarea class="form-control" id="specialNotes" asp-for="Booking.SpecialNotes" rows="3" placeholder="Tell us about your vision, location preferences, style, or any special details..."></textarea>
                         </div>
 
                         <!-- Submit Button -->
-                        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                            <button type="submit" class="btn btn-primary" style="flex: 1; min-height: 52px;">
-                                Submit Booking Request
+                        <div style="display: flex; gap: 1rem; margin-top: 2.5rem;">
+                            <button type="submit" class="btn btn-primary" style="flex: 1; min-height: 56px; font-size: 1.1rem;">
+                                ✓ Submit Booking Request
                             </button>
                         </div>
+
+                        <p style="text-align: center; margin-top: 1.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                            📧 You'll receive a confirmation email shortly after submitting
+                        </p>
                     </form>
                 </div>
             </div>
 
             <!-- Help Section -->
-            <div class="help-section" style="margin-top: 3rem; padding: 2rem; background-color: var(--light-bg); border-radius: var(--radius); border: 1px solid var(--border-color);">
-                <h4 style="margin-bottom: 1rem; font-size: 1.1rem;">Questions?</h4>
-                <p style="margin-bottom: 0;">We're here to help! <a href="/Contact">Contact us directly</a> if you have any questions about our services.</p>
+            <div class="help-section" style="margin-top: 3rem;">
+                <h4 style="margin-bottom: 1rem; font-size: 1.1rem;">❓ Have Questions?</h4>
+                <p style="margin-bottom: 0;">We're happy to help! <a href="/Contact">Contact us directly</a> if you have any questions about our services, pricing, or availability.</p>
             </div>
         </div>
     </div>
