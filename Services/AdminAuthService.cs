@@ -71,18 +71,21 @@ namespace MRMstudios.Services
                 _fileLock.Release();
             }
 
-            var allSent = true;
+            var successfulSends = 0;
             foreach (var email in AdminEmails)
             {
                 var sent = await _emailService.SendAdminPasswordResetAsync(email, newPassword);
-                if (!sent)
+                if (sent)
                 {
-                    allSent = false;
+                    successfulSends++;
+                }
+                else
+                {
                     _logger.LogError("Generated admin password, but failed to send reset email to {Email}.", email);
                 }
             }
 
-            return allSent;
+            return successfulSends > 0;
         }
 
         private async Task<AdminAuthState> ReadOrInitializeStateAsync()

@@ -60,7 +60,7 @@ public class AdminLoginModel : PageModel
         }
         else
         {
-            TempData["Error"] = "Could not send reset email to one or more admin addresses. Check SMTP settings and try again.";
+            TempData["Error"] = "Could not send reset email to any admin address. Check SMTP settings and try again.";
         }
 
         return Page();
