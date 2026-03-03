@@ -18,12 +18,28 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\fabia\Fabiana\Desktop\MelvonPhotographyApp
 build_property._RazorSourceGeneratorDebug = 
 
+[C:/Users/fabia/Fabiana/Desktop/MelvonPhotographyApp/Pages/AdminBookings.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5Cb29raW5ncy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fabia/Fabiana/Desktop/MelvonPhotographyApp/Pages/Booking.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQm9va2luZy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fabia/Fabiana/Desktop/MelvonPhotographyApp/Pages/Contact.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29udGFjdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/fabia/Fabiana/Desktop/MelvonPhotographyApp/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/fabia/Fabiana/Desktop/MelvonPhotographyApp/Pages/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fabia/Fabiana/Desktop/MelvonPhotographyApp/Pages/Packages.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGFja2FnZXMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/fabia/Fabiana/Desktop/MelvonPhotographyApp/Pages/Privacy.cshtml]

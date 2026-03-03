@@ -1,0 +1,110 @@
+@page
+@model MelvonPhotographyApp.Pages.AdminBookingsModel
+@{
+    ViewData["Title"] = "Manage Bookings";
+}
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>📋 Booking Management</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <span class="badge bg-primary fs-6">Total Bookings: @Model.Bookings.Count</span>
+            <span class="badge bg-warning fs-6">Pending: @Model.Bookings.Count(b => b.Status == "Pending")</span>
+            <span class="badge bg-success fs-6">Confirmed: @Model.Bookings.Count(b => b.Status == "Confirmed")</span>
+        </div>
+    </div>
+
+    @if (!Model.Bookings.Any())
+    {
+        <div class="alert alert-info">
+            <strong>No bookings yet.</strong> When clients submit booking requests, they will appear here.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Service</th>
+                        <th>Preferred Date</th>
+                        <th>Status</th>
+                        <th>Booked On</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in Model.Bookings)
+                    {
+                        <tr>
+                            <td><strong>#@booking.Id</strong></td>
+                            <td>@booking.FullName</td>
+                            <td><a href="mailto:@booking.Email">@booking.Email</a></td>
+                            <td><a href="tel:@booking.PhoneNumber">@booking.PhoneNumber</a></td>
+                            <td>@booking.ServiceType</td>
+                            <td>@booking.PreferredDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                @if (booking.Status == "Pending")
+                                {
+                                    <span class="badge bg-warning">⏳ Pending</span>
+                                }
+                                else if (booking.Status == "Confirmed")
+                                {
+                                    <span class="badge bg-success">✅ Confirmed</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">❌ Cancelled</span>
+                                }
+                            </td>
+                            <td>@booking.BookingDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                @if (booking.Status == "Pending")
+                                {
+                                    <form method="post" style="display: inline;">
+                                        <button type="submit" asp-page-handler="Confirm" asp-route-id="@booking.Id" class="btn btn-success btn-sm">✓ Confirm</button>
+                                    </form>
+                                }
+                                <form method="post" style="display: inline;">
+                                    <button type="submit" asp-page-handler="Cancel" asp-route-id="@booking.Id" class="btn btn-warning btn-sm">✗ Cancel</button>
+                                </form>
+                                <form method="post" style="display: inline;">
+                                    <button type="submit" asp-page-handler="Delete" asp-route-id="@booking.Id" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">🗑 Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        @if (!string.IsNullOrEmpty(booking.SpecialNotes))
+                        {
+                            <tr class="table-light">
+                                <td colspan="9">
+                                    <strong>📝 Special Notes:</strong> @booking.SpecialNotes
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .badge {
+        margin: 0 5px;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+</style>

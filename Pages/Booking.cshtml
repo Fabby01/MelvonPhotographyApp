@@ -1,0 +1,139 @@
+@page
+@model MelvonPhotographyApp.Pages.BookingModel
+@{
+    ViewData["Title"] = "Book a Session";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="mb-4">📅 Book Your Photography Session</h1>
+
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @Model.Message
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @Model.Error
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form method="post" class="booking-form">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="fullName" class="form-label">Full Name *</label>
+                        <input type="text" class="form-control" id="fullName" asp-for="Booking.FullName" required>
+                        <span asp-validation-for="Booking.FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Email Address *</label>
+                        <input type="email" class="form-control" id="email" asp-for="Booking.Email" required>
+                        <span asp-validation-for="Booking.Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label">Phone Number *</label>
+                        <input type="tel" class="form-control" id="phone" asp-for="Booking.PhoneNumber" required>
+                        <span asp-validation-for="Booking.PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="serviceType" class="form-label">Service Type *</label>
+                        <select class="form-select" id="serviceType" asp-for="Booking.ServiceType" required>
+                            <option value="">-- Select a Service --</option>
+                            @foreach (var service in Model.Services)
+                            {
+                                <option value="@service.Name">
+                                    @service.Name - $@service.Price
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="Booking.ServiceType" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="preferredDate" class="form-label">Preferred Date *</label>
+                    <input type="date" class="form-control" id="preferredDate" asp-for="Booking.PreferredDate" required>
+                    <span asp-validation-for="Booking.PreferredDate" class="text-danger"></span>
+                    <small class="form-text text-muted">Please select a date at least 7 days in advance</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="specialNotes" class="form-label">Special Requests or Notes</label>
+                    <textarea class="form-control" id="specialNotes" asp-for="Booking.SpecialNotes" rows="4" placeholder="Any special requirements or notes about your session..."></textarea>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        📸 Submit Booking Request
+                    </button>
+                </div>
+            </form>
+
+            <hr class="my-5">
+
+            <div class="info-section">
+                <h4>📞 Need Help?</h4>
+                <p>If you have any questions, feel free to <a href="/Contact">contact us directly</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .booking-form {
+        background-color: #f8f9fa;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .form-control, .form-select {
+        border-radius: 4px;
+        border: 1px solid #ddd;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border: none;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #0b5ed7;
+    }
+
+    .info-section {
+        background-color: #e7f3ff;
+        padding: 20px;
+        border-left: 4px solid #0d6efd;
+        border-radius: 4px;
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
