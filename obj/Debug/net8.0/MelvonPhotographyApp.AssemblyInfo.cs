@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MelvonPhotographyApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f85a0f6ce9fc5883cfe73fec233fcc2daa7228c9")]
 [assembly: System.Reflection.AssemblyProductAttribute("MelvonPhotographyApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MelvonPhotographyApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

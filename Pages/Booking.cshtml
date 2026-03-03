@@ -66,7 +66,28 @@
                     <label for="preferredDate" class="form-label">Preferred Date *</label>
                     <input type="date" class="form-control" id="preferredDate" asp-for="Booking.PreferredDate" required>
                     <span asp-validation-for="Booking.PreferredDate" class="text-danger"></span>
-                    <small class="form-text text-muted">Please select a date at least 7 days in advance</small>
+                    <small class="form-text text-muted">📅 Please select from available dates (minimum 7 days in advance)</small>
+                    
+                    <div class="available-dates-info mt-3">
+                        <strong>📆 Available Dates (Next 3 Months):</strong>
+                        <div class="dates-list">
+                            @if (Model.AvailableDates.Any())
+                            {
+                                @foreach (var date in Model.AvailableDates.Take(15))
+                                {
+                                    <span class="badge bg-success">@date.ToString("MMM dd")</span>
+                                }
+                                @if (Model.AvailableDates.Count > 15)
+                                {
+                                    <span class="badge bg-info">+@(Model.AvailableDates.Count - 15) more dates</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">No dates available. Please contact us.</span>
+                            }
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -132,6 +153,26 @@
         border-left: 4px solid #0d6efd;
         border-radius: 4px;
     }
+
+    .available-dates-info {
+        background-color: #f0f8ff;
+        padding: 15px;
+        border-left: 4px solid #28a745;
+        border-radius: 4px;
+    }
+
+    .dates-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .dates-list .badge {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
 </style>
 
 @section Scripts {

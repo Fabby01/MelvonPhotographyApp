@@ -11,6 +11,8 @@ namespace MelvonPhotographyApp.Services
         Task<bool> UpdateBookingAsync(Booking booking);
         Task<bool> DeleteBookingAsync(int id);
         List<Service> GetServices();
+        Task<List<DateTime>> GetAvailableDatesAsync(int monthsAhead = 3);
+        Task<bool> IsDateAvailableAsync(DateTime date);
     }
 
     public class BookingService : IBookingService
@@ -99,6 +101,44 @@ namespace MelvonPhotographyApp.Services
         public List<Service> GetServices()
         {
             return _services;
+        }
+
+        public async Task<List<DateTime>> GetAvailableDatesAsync(int monthsAhead = 3)
+        {
+            var bookings = await GetAllBookingsAsync();
+            var bookedDates = bookings
+                .Where(b => b.Status != "Cancelled")
+                .Select(b => b.PreferredDate.Date)
+                .Distinct()
+                .ToList();
+
+            var availableDates = new List<DateTime>();
+            var today = DateTime.Today.AddDays(7); // Start 7 days from now
+            var endDate = today.AddMonths(monthsAhead);
+
+            for (var date = today; date <= endDate; date = date.AddDays(1))
+            {
+                // Skip weekends if desired (commented out - feel free to enable)
+                // if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+                //     continue;
+
+                if (!bookedDates.Contains(date))
+                {
+                    availableDates.Add(date);
+                }
+            }
+
+            return availableDates;
+        }
+
+        public async Task<bool> IsDateAvailableAsync(DateTime date)
+        {
+            var bookings = await GetAllBookingsAsync();
+            var isBooked = bookings
+                .Where(b => b.Status != "Cancelled")
+                .Any(b => b.PreferredDate.Date == date.Date);
+
+            return !isBooked && date.Date >= DateTime.Today.AddDays(7);
         }
 
         private async Task SaveBookingsAsync(List<Booking> bookings)
