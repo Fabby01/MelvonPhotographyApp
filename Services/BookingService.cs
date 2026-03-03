@@ -13,6 +13,8 @@ namespace MRMstudios.Services
         List<Service> GetServices();
         Task<List<DateTime>> GetAvailableDatesAsync(int monthsAhead = 3);
         Task<bool> IsDateAvailableAsync(DateTime date);
+        Task<bool> CleanupOldBookingsAsync();
+        Task<int> GetBookingCountAsync();
     }
 
     public class BookingService : IBookingService
@@ -109,7 +111,6 @@ namespace MRMstudios.Services
             var bookedDates = bookings
                 .Where(b => b.Status != "Cancelled")
                 .Select(b => b.PreferredDate.Date)
-                .Distinct()
                 .ToList();
 
             var availableDates = new List<DateTime>();
@@ -118,14 +119,9 @@ namespace MRMstudios.Services
 
             for (var date = today; date <= endDate; date = date.AddDays(1))
             {
-                // Skip weekends if desired (commented out - feel free to enable)
-                // if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
-                //     continue;
-
-                if (!bookedDates.Contains(date))
-                {
-                    availableDates.Add(date);
-                }
+                // Allow multiple bookings per day - removed the booking limit
+                // Just ensure we track booked dates for reference
+                availableDates.Add(date);
             }
 
             return availableDates;
@@ -133,12 +129,48 @@ namespace MRMstudios.Services
 
         public async Task<bool> IsDateAvailableAsync(DateTime date)
         {
-            var bookings = await GetAllBookingsAsync();
-            var isBooked = bookings
-                .Where(b => b.Status != "Cancelled")
-                .Any(b => b.PreferredDate.Date == date.Date);
+            await Task.CompletedTask; // Satisfy async requirement
+            // Allow multiple bookings on the same date
+            return date.Date >= DateTime.Today.AddDays(7);
+        }
 
-            return !isBooked && date.Date >= DateTime.Today.AddDays(7);
+        public async Task<bool> CleanupOldBookingsAsync()
+        {
+            try
+            {
+                var bookings = await GetAllBookingsAsync();
+                var originalCount = bookings.Count;
+
+                // Remove cancelled bookings older than 30 days
+                var thirtyDaysAgo = DateTime.Now.AddDays(-30);
+                bookings = bookings
+                    .Where(b => !(b.Status == "Cancelled" && b.BookingDate < thirtyDaysAgo))
+                    .ToList();
+
+                // Remove completed bookings (past date) older than 90 days after completion
+                var ninetyDaysAgo = DateTime.Now.AddDays(-90);
+                bookings = bookings
+                    .Where(b => !(b.PreferredDate < DateTime.Today && b.BookingDate < ninetyDaysAgo))
+                    .ToList();
+
+                if (bookings.Count < originalCount)
+                {
+                    await SaveBookingsAsync(bookings);
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<int> GetBookingCountAsync()
+        {
+            var bookings = await GetAllBookingsAsync();
+            return bookings.Count;
         }
 
         private async Task SaveBookingsAsync(List<Booking> bookings)

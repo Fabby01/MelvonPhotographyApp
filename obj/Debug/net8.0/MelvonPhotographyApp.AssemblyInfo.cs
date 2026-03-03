@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MRMstudios")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+450a425f71587fb90eee7c22f33549f614dd05db")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cdd553baa7c7a6a62b585aba722020ad2e49c672")]
 [assembly: System.Reflection.AssemblyProductAttribute("MRMstudios")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MRMstudios")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
