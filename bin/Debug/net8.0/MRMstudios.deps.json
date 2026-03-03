@@ -6,15 +6,15 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v8.0": {
-      "MelvonPhotographyApp/1.0.0": {
+      "MRMstudios/1.0.0": {
         "runtime": {
-          "MelvonPhotographyApp.dll": {}
+          "MRMstudios.dll": {}
         }
       }
     }
   },
   "libraries": {
-    "MelvonPhotographyApp/1.0.0": {
+    "MRMstudios/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

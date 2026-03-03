@@ -15,4 +15,4 @@ COPY --from=build /app/out ./
 ENV ASPNETCORE_URLS=http://+:10000
 EXPOSE 10000
 
-ENTRYPOINT ["dotnet", "MelvonPhotographyApp.dll"]
+ENTRYPOINT ["dotnet", "MRMstudios.dll"]

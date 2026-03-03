@@ -1,8 +1,8 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\MelvonPhotographyApp.bundle.scp.css",
-      "PackagePath": "staticwebassets\\MelvonPhotographyApp.bundle.scp.css"
+      "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\MRMstudios.bundle.scp.css",
+      "PackagePath": "staticwebassets\\MRMstudios.bundle.scp.css"
     },
     {
       "Id": "C:\\Users\\fabia\\Fabiana\\Desktop\\MelvonPhotographyApp\\wwwroot\\css\\site.css",
@@ -261,20 +261,20 @@
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
     },
     {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.MelvonPhotographyApp.Microsoft.AspNetCore.StaticWebAssets.props",
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.MRMstudios.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
     },
     {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.MelvonPhotographyApp.props",
-      "PackagePath": "build\\MelvonPhotographyApp.props"
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.MRMstudios.props",
+      "PackagePath": "build\\MRMstudios.props"
     },
     {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.MelvonPhotographyApp.props",
-      "PackagePath": "buildMultiTargeting\\MelvonPhotographyApp.props"
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.MRMstudios.props",
+      "PackagePath": "buildMultiTargeting\\MRMstudios.props"
     },
     {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.MelvonPhotographyApp.props",
-      "PackagePath": "buildTransitive\\MelvonPhotographyApp.props"
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.MRMstudios.props",
+      "PackagePath": "buildTransitive\\MRMstudios.props"
     }
   ],
   "ElementsToRemove": []

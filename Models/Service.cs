@@ -1,4 +1,4 @@
-namespace MelvonPhotographyApp.Models
+namespace MRMstudios.Models
 {
     public class Service
     {

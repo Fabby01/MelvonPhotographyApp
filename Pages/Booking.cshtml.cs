@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MelvonPhotographyApp.Models;
-using MelvonPhotographyApp.Services;
+using MRMstudios.Models;
+using MRMstudios.Services;
 
-namespace MelvonPhotographyApp.Pages
+namespace MRMstudios.Pages
 {
     public class BookingModel : PageModel
     {

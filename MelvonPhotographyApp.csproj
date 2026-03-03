@@ -4,8 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>MelvonPhotographyApp</RootNamespace>
-    <AssemblyName>MelvonPhotographyApp</AssemblyName>
+    <RootNamespace>MRMstudios</RootNamespace>
+    <AssemblyName>MRMstudios</AssemblyName>
   </PropertyGroup>
 
 </Project>

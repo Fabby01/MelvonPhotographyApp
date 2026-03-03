@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace MelvonPhotographyApp.Pages;
+namespace MRMstudios.Pages;
 
 public class PrivacyModel : PageModel
 {

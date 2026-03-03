@@ -1,7 +1,7 @@
-using MelvonPhotographyApp.Models;
+using MRMstudios.Models;
 using System.Text.Json;
 
-namespace MelvonPhotographyApp.Services
+namespace MRMstudios.Services
 {
     public interface IBookingService
     {

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json;
 
-namespace MelvonPhotographyApp.Pages
+namespace MRMstudios.Pages
 {
     public class UploadModel : PageModel
     {
