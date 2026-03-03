@@ -29,27 +29,10 @@ namespace MRMstudios.Services
         {
             _logger = logger;
 
-            var configuredPath = Environment.GetEnvironmentVariable("BOOKINGS_FILE_PATH")
-                                 ?? configuration["Storage:BookingsFilePath"];
-
-            if (!string.IsNullOrWhiteSpace(configuredPath))
-            {
-                _bookingsFilePath = configuredPath;
-            }
-            else
-            {
-                var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                var dataDir = Path.Combine(localAppData, "MRMstudios");
-                _bookingsFilePath = Path.Combine(dataDir, "bookings.json");
-            }
-
-            var targetDir = Path.GetDirectoryName(_bookingsFilePath);
-            if (!string.IsNullOrWhiteSpace(targetDir))
-            {
-                Directory.CreateDirectory(targetDir);
-            }
-
+            var configuredPath = Environment.GetEnvironmentVariable("BOOKINGS_FILE_PATH") ?? configuration["Storage:BookingsFilePath"];
+            _bookingsFilePath = ResolveWritableBookingsPath(environment, configuredPath);
             TryMigrateLegacyBookingsFile(environment);
+            _logger.LogInformation("Using bookings file path: {BookingsFilePath}", _bookingsFilePath);
 
             _services = new List<Service>
             {
@@ -266,6 +249,44 @@ namespace MRMstudios.Services
             {
                 _logger.LogWarning(ex, "Failed to migrate legacy bookings file to {Target}", _bookingsFilePath);
             }
+        }
+
+        private string ResolveWritableBookingsPath(IWebHostEnvironment environment, string? configuredPath)
+        {
+            var candidates = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(configuredPath))
+            {
+                candidates.Add(configuredPath);
+            }
+
+            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            if (!string.IsNullOrWhiteSpace(localAppData))
+            {
+                candidates.Add(Path.Combine(localAppData, "MRMstudios", "bookings.json"));
+            }
+
+            candidates.Add(Path.Combine(environment.ContentRootPath, "App_Data", "bookings.json"));
+
+            foreach (var candidate in candidates)
+            {
+                try
+                {
+                    var dir = Path.GetDirectoryName(candidate);
+                    if (!string.IsNullOrWhiteSpace(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
+                    return candidate;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Bookings path not writable: {CandidatePath}", candidate);
+                }
+            }
+
+            // Last-resort relative path to avoid app startup failure.
+            return Path.Combine("App_Data", "bookings.json");
         }
     }
 }
