@@ -2,14 +2,6 @@
 @model MRMstudios.Pages.AdminBookingsModel
 @{
     ViewData["Title"] = "Admin Dashboard - Manage Bookings";
-    
-    // Check authentication
-    var isAuthenticated = HttpContext.Session.GetString("AdminAuthenticated") == "true";
-    if (!isAuthenticated)
-    {
-        <script>window.location.href = "/AdminLogin";</script>
-        return;
-    }
 }
 
 <div class="admin-header">

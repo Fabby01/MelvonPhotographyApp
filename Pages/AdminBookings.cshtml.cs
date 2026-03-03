@@ -9,27 +9,30 @@ namespace MRMstudios.Pages
     {
         private readonly IBookingService _bookingService;
         private readonly IEmailService _emailService;
+        private readonly ILogger<AdminBookingsModel> _logger;
 
-        public AdminBookingsModel(IBookingService bookingService, IEmailService emailService)
+        public AdminBookingsModel(IBookingService bookingService, IEmailService emailService, ILogger<AdminBookingsModel> logger)
         {
             _bookingService = bookingService;
             _emailService = emailService;
+            _logger = logger;
         }
 
         public List<Booking> Bookings { get; set; } = new();
         public string? Message { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             // Check authentication
             var isAuthenticated = HttpContext.Session.GetString("AdminAuthenticated") == "true";
             if (!isAuthenticated)
             {
-                return;
+                return RedirectToPage("/AdminLogin");
             }
 
             Bookings = await _bookingService.GetAllBookingsAsync();
             Bookings = Bookings.OrderByDescending(b => b.BookingDate).ToList();
+            return Page();
         }
 
         public IActionResult OnPostLogout()
@@ -48,18 +51,24 @@ namespace MRMstudios.Pages
                 return RedirectToPage("/AdminLogin");
             }
 
-            var booking = await _bookingService.GetBookingByIdAsync(id);
+            var booking = await _bookingService.UpdateBookingStatusAsync(id, "Confirmed");
             if (booking != null)
             {
-                booking.Status = "Confirmed";
-                await _bookingService.UpdateBookingAsync(booking);
-
-                // Send confirmation email to client
-                await _emailService.SendConfirmationEmailToClientAsync(
-                    booking.Email, 
-                    booking.FullName, 
-                    booking.ServiceType, 
-                    booking.PreferredDate);
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _emailService.SendConfirmationEmailToClientAsync(
+                            booking.Email,
+                            booking.FullName,
+                            booking.ServiceType,
+                            booking.PreferredDate);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to send async confirmation email for booking id {BookingId}", booking.Id);
+                    }
+                });
             }
             return RedirectToPage();
         }
@@ -73,12 +82,7 @@ namespace MRMstudios.Pages
                 return RedirectToPage("/AdminLogin");
             }
 
-            var booking = await _bookingService.GetBookingByIdAsync(id);
-            if (booking != null)
-            {
-                booking.Status = "Cancelled";
-                await _bookingService.UpdateBookingAsync(booking);
-            }
+            await _bookingService.UpdateBookingStatusAsync(id, "Cancelled");
             return RedirectToPage();
         }
 

@@ -1,10 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MRMstudios.Services;
 
 namespace MRMstudios.Pages;
 
 public class AdminLoginModel : PageModel
 {
+    private readonly IAdminAuthService _adminAuthService;
+
+    public AdminLoginModel(IAdminAuthService adminAuthService)
+    {
+        _adminAuthService = adminAuthService;
+    }
+
     [BindProperty]
     public string Username { get; set; } = string.Empty;
 
@@ -17,20 +25,17 @@ public class AdminLoginModel : PageModel
         HttpContext.Session.Clear();
     }
 
-    public IActionResult OnPost()
+    public async Task<IActionResult> OnPostAsync()
     {
-        // Hard-coded admin credentials (for demo - use environment variables in production)
-        const string adminUsername = "admin";
-        const string adminPassword = "MRMstudios2026!Secure";
-
         if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
         {
             TempData["Error"] = "Please enter both username and password.";
             return Page();
         }
 
-        // Verify credentials
-        if (Username == adminUsername && Password == adminPassword)
+        // Verify credentials against hashed stored password
+        var validCredentials = await _adminAuthService.ValidateCredentialsAsync(Username, Password);
+        if (validCredentials)
         {
             // Set session cookie for authentication
             HttpContext.Session.SetString("AdminAuthenticated", "true");
@@ -41,6 +46,23 @@ public class AdminLoginModel : PageModel
 
         TempData["Error"] = "Invalid username or password. Please try again.";
         Password = string.Empty; // Clear password field for security
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostGeneratePasswordAsync()
+    {
+        HttpContext.Session.Clear();
+
+        var sent = await _adminAuthService.GenerateAndEmailNewPasswordAsync();
+        if (sent)
+        {
+            TempData["Success"] = "A new admin password was sent to mel.dimplz@gmail.com.";
+        }
+        else
+        {
+            TempData["Error"] = "Could not send reset email. Check SMTP settings and try again.";
+        }
+
         return Page();
     }
 }

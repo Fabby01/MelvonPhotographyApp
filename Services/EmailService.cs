@@ -8,6 +8,7 @@ namespace MRMstudios.Services
         Task<bool> SendBookingConfirmationAsync(string clientEmail, string clientName, int bookingId, string serviceType, DateTime bookingDate, decimal price);
         Task<bool> SendBookingNotificationToOwnerAsync(string clientName, string clientEmail, string phoneNumber, string serviceType, DateTime bookingDate, string specialNotes);
         Task<bool> SendConfirmationEmailToClientAsync(string clientEmail, string clientName, string serviceType, DateTime bookingDate);
+        Task<bool> SendAdminPasswordResetAsync(string adminEmail, string newPassword);
     }
 
     public class EmailService : IEmailService
@@ -186,27 +187,55 @@ namespace MRMstudios.Services
 
         private async Task<bool> SendEmailAsync(string toEmail, string subject, string htmlBody)
         {
-            try
-            {
-                // Try to send via SMTP (configure in appsettings.json)
-                // For now, log to console and also try to send via Gmail
-                _logger.LogInformation($"\n========== EMAIL SENT ==========");
-                _logger.LogInformation($"To: {toEmail}");
-                _logger.LogInformation($"Subject: {subject}");
-                _logger.LogInformation($"================================\n");
+            // Always log the email content for audit / fallback
+            _logger.LogInformation("\n========== EMAIL ATTEMPT ==========");
+            _logger.LogInformation($"To: {toEmail}");
+            _logger.LogInformation($"Subject: {subject}");
 
-                // Attempt to send via Gmail SMTP
+            // Read SMTP settings from configuration / environment
+            var smtpHost = _configuration["Email:SmtpHost"]; // e.g. smtp.sendgrid.net or smtp.gmail.com
+            var smtpPortString = _configuration["Email:SmtpPort"]; // e.g. 587
+            var smtpUser = _configuration["Email:SmtpUser"]; // username or API key
+            var smtpPass = _configuration["Email:SmtpPass"]; // password or API key
+            var fromAddress = _configuration["Email:FromAddress"] ?? _ownerEmail;
+            var fromName = _configuration["Email:FromName"] ?? "MRMstudios";
+            var enableSsl = (_configuration["Email:EnableSsl"] ?? "true").ToLower() == "true";
+
+            // If SMTP not configured, skip actual sending but return success (email logged)
+            if (string.IsNullOrWhiteSpace(smtpHost) || string.IsNullOrWhiteSpace(smtpPortString))
+            {
+                _logger.LogWarning("SMTP not configured (Email:SmtpHost or Email:SmtpPort missing). Email was logged but not sent.");
+                _logger.LogInformation("================================\n");
+                return false;
+            }
+
+            if (!int.TryParse(smtpPortString, out var smtpPort))
+            {
+                _logger.LogWarning($"Invalid SMTP port '{smtpPortString}'. Email was logged but not sent.");
+                _logger.LogInformation("================================\n");
+                return false;
+            }
+
+            // Retry loop (simple exponential backoff)
+            var attempts = 3;
+            var delayMs = 1000;
+            for (int attempt = 1; attempt <= attempts; attempt++)
+            {
                 try
                 {
-                    using (var client = new SmtpClient("smtp.gmail.com", 587))
+                    using (var client = new SmtpClient(smtpHost, smtpPort))
                     {
-                        client.EnableSsl = true;
-                        client.Credentials = new NetworkCredential("mel.dimplz@gmail.com", "xmfd xdvr voaa kizm");
+                        client.EnableSsl = enableSsl;
                         client.Timeout = 10000;
+
+                        if (!string.IsNullOrWhiteSpace(smtpUser) && !string.IsNullOrWhiteSpace(smtpPass))
+                        {
+                            client.Credentials = new NetworkCredential(smtpUser, smtpPass);
+                        }
 
                         var mailMessage = new MailMessage
                         {
-                            From = new MailAddress("mel.dimplz@gmail.com", "MRMstudios Photography"),
+                            From = new MailAddress(fromAddress, fromName),
                             Subject = subject,
                             Body = htmlBody,
                             IsBodyHtml = true
@@ -214,22 +243,28 @@ namespace MRMstudios.Services
                         mailMessage.To.Add(toEmail);
 
                         await client.SendMailAsync(mailMessage);
-                        _logger.LogInformation($"✓ Email successfully sent to {toEmail}");
+                        _logger.LogInformation($"✓ Email successfully sent to {toEmail} via {smtpHost}:{smtpPort}");
+                        _logger.LogInformation("================================\n");
                         return true;
                     }
                 }
                 catch (Exception smtpEx)
                 {
-                    _logger.LogWarning($"SMTP sending failed: {smtpEx.Message}. Email details logged above.");
-                    // Return true anyway - email was logged
-                    return true;
+                    _logger.LogWarning($"Attempt {attempt} - SMTP send failed: {smtpEx.Message}");
+                    if (attempt < attempts)
+                    {
+                        await Task.Delay(delayMs);
+                        delayMs *= 2;
+                        continue;
+                    }
+                    _logger.LogError($"All attempts to send email failed. Email was logged above. Last error: {smtpEx.Message}");
+                    _logger.LogInformation("================================\n");
+                    return false;
                 }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error sending email: {ex.Message}");
-                return false;
-            }
+
+            _logger.LogInformation("================================\n");
+            return false;
         }
 
         public async Task<bool> SendConfirmationEmailToClientAsync(string clientEmail, string clientName, string serviceType, DateTime bookingDate)
@@ -297,6 +332,32 @@ namespace MRMstudios.Services
             catch (Exception ex)
             {
                 _logger.LogError($"Error sending confirmation email to client: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> SendAdminPasswordResetAsync(string adminEmail, string newPassword)
+        {
+            try
+            {
+                var subject = "New Admin Password - MRMstudios";
+                var body = $@"
+                    <html>
+                    <body style='font-family: Segoe UI, Arial, sans-serif; color: #333; line-height: 1.5;'>
+                        <h2>Admin Password Reset</h2>
+                        <p>A new admin password was generated for your dashboard.</p>
+                        <p><strong>Username:</strong> admin</p>
+                        <p><strong>New Password:</strong> {newPassword}</p>
+                        <p>Please log in and store this password securely.</p>
+                    </body>
+                    </html>
+                ";
+
+                return await SendEmailAsync(adminEmail, subject, body);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error sending admin password reset email: {ex.Message}");
                 return false;
             }
         }

@@ -9,11 +9,16 @@ namespace MRMstudios.Pages
     {
         private readonly IBookingService _bookingService;
         private readonly IEmailService _emailService;
+        private readonly ILogger<BookingModel> _logger;
 
-        public BookingModel(IBookingService bookingService, IEmailService emailService)
+        public BookingModel(
+            IBookingService bookingService,
+            IEmailService emailService,
+            ILogger<BookingModel> logger)
         {
             _bookingService = bookingService;
             _emailService = emailService;
+            _logger = logger;
         }
 
         [BindProperty]
@@ -23,27 +28,33 @@ namespace MRMstudios.Pages
         public string? Message { get; set; }
         public string? Error { get; set; }
         public List<DateTime> AvailableDates { get; set; } = new();
-        public int TotalBookings { get; set; }
 
         public async Task OnGetAsync()
         {
             Services = _bookingService.GetServices();
             AvailableDates = await _bookingService.GetAvailableDatesAsync();
-            TotalBookings = await _bookingService.GetBookingCountAsync();
-            
-            // Run cleanup task in background (remove old bookings)
-            _ = _bookingService.CleanupOldBookingsAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             Services = _bookingService.GetServices();
             AvailableDates = await _bookingService.GetAvailableDatesAsync();
-            TotalBookings = await _bookingService.GetBookingCountAsync();
+
+            Booking.FullName = Booking.FullName?.Trim() ?? string.Empty;
+            Booking.Email = Booking.Email?.Trim() ?? string.Empty;
+            Booking.PhoneNumber = Booking.PhoneNumber?.Trim() ?? string.Empty;
+            Booking.ServiceType = Booking.ServiceType?.Trim() ?? string.Empty;
+            Booking.SpecialNotes = Booking.SpecialNotes?.Trim() ?? string.Empty;
 
             if (!ModelState.IsValid)
             {
                 Error = "Please fill in all required fields correctly.";
+                return Page();
+            }
+
+            if (!Services.Any(s => s.Name == Booking.ServiceType))
+            {
+                Error = "Please select a valid service.";
                 return Page();
             }
 
@@ -62,40 +73,49 @@ namespace MRMstudios.Pages
 
             try
             {
-                // Create the booking
                 var bookingId = await _bookingService.CreateBookingAsync(Booking);
-                
-                // Get the service details for the email
                 var service = Services.FirstOrDefault(s => s.Name == Booking.ServiceType);
                 var price = service?.Price ?? 0;
 
-                // Send confirmation email to client
-                var clientEmailSent = await _emailService.SendBookingConfirmationAsync(
-                    Booking.Email,
-                    Booking.FullName,
-                    bookingId,
-                    Booking.ServiceType,
-                    Booking.PreferredDate,
-                    price
-                );
+                var bookingSnapshot = new Booking
+                {
+                    Id = bookingId,
+                    FullName = Booking.FullName,
+                    Email = Booking.Email,
+                    PhoneNumber = Booking.PhoneNumber,
+                    ServiceType = Booking.ServiceType,
+                    PreferredDate = Booking.PreferredDate,
+                    SpecialNotes = Booking.SpecialNotes
+                };
 
-                // Send notification email to business owner
-                var ownerEmailSent = await _emailService.SendBookingNotificationToOwnerAsync(
-                    Booking.FullName,
-                    Booking.Email,
-                    Booking.PhoneNumber,
-                    Booking.ServiceType,
-                    Booking.PreferredDate,
-                    Booking.SpecialNotes
-                );
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await Task.WhenAll(
+                            _emailService.SendBookingConfirmationAsync(
+                                bookingSnapshot.Email,
+                                bookingSnapshot.FullName,
+                                bookingSnapshot.Id,
+                                bookingSnapshot.ServiceType,
+                                bookingSnapshot.PreferredDate,
+                                price),
+                            _emailService.SendBookingNotificationToOwnerAsync(
+                                bookingSnapshot.FullName,
+                                bookingSnapshot.Email,
+                                bookingSnapshot.PhoneNumber,
+                                bookingSnapshot.ServiceType,
+                                bookingSnapshot.PreferredDate,
+                                bookingSnapshot.SpecialNotes));
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Background booking email processing failed for booking id {BookingId}", bookingSnapshot.Id);
+                    }
+                });
 
-                var emailStatus = (clientEmailSent && ownerEmailSent) 
-                    ? "✅ Confirmation emails have been sent!" 
-                    : "⚠️ Confirmation received, but emails could not be sent at this time.";
-
-                Message = $"✅ Booking submitted successfully! Confirmation ID: {bookingId}. {emailStatus} We'll contact you shortly to confirm.";
+                Message = $"Booking submitted successfully. Confirmation ID: {bookingId}. We'll contact you shortly.";
                 Booking = new();
-                TotalBookings = await _bookingService.GetBookingCountAsync();
                 return Page();
             }
             catch (Exception ex)

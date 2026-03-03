@@ -9,6 +9,7 @@ namespace MRMstudios.Services
         Task<Booking?> GetBookingByIdAsync(int id);
         Task<int> CreateBookingAsync(Booking booking);
         Task<bool> UpdateBookingAsync(Booking booking);
+        Task<Booking?> UpdateBookingStatusAsync(int id, string status);
         Task<bool> DeleteBookingAsync(int id);
         List<Service> GetServices();
         Task<List<DateTime>> GetAvailableDatesAsync(int monthsAhead = 3);
@@ -24,7 +25,9 @@ namespace MRMstudios.Services
 
         public BookingService(IWebHostEnvironment environment)
         {
-            _bookingsFilePath = Path.Combine(environment.WebRootPath, "bookings.json");
+            var dataDir = Path.Combine(environment.ContentRootPath, "App_Data");
+            Directory.CreateDirectory(dataDir);
+            _bookingsFilePath = Path.Combine(dataDir, "bookings.json");
             _services = new List<Service>
             {
                 new Service { Id = 1, Name = "Wedding Photography", Price = 800, Description = "Full day wedding coverage with multiple locations" },
@@ -98,6 +101,20 @@ namespace MRMstudios.Services
             bookings.Remove(booking);
             await SaveBookingsAsync(bookings);
             return true;
+        }
+
+        public async Task<Booking?> UpdateBookingStatusAsync(int id, string status)
+        {
+            var bookings = await GetAllBookingsAsync();
+            var booking = bookings.FirstOrDefault(b => b.Id == id);
+            if (booking == null)
+            {
+                return null;
+            }
+
+            booking.Status = status;
+            await SaveBookingsAsync(bookings);
+            return booking;
         }
 
         public List<Service> GetServices()

@@ -1,15 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 
 namespace MRMstudios.Pages
 {
     public class UploadModel : PageModel
     {
+        private const long MaxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
+        private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".jpg", ".jpeg", ".png", ".webp"
+        };
+
         [BindProperty]
         public IFormFile? Photo { get; set; }
 
         [BindProperty]
+        [StringLength(200)]
         public string? Caption { get; set; }
 
         public string? Message { get; set; }
@@ -25,11 +33,30 @@ namespace MRMstudios.Pages
                 return Page();
             }
 
+            if (Photo.Length == 0 || Photo.Length > MaxFileSizeBytes)
+            {
+                Error = "Invalid file size. Please upload an image up to 5 MB.";
+                return Page();
+            }
+
+            var extension = Path.GetExtension(Photo.FileName);
+            if (string.IsNullOrWhiteSpace(extension) || !AllowedExtensions.Contains(extension))
+            {
+                Error = "Only JPG, JPEG, PNG, and WEBP files are allowed.";
+                return Page();
+            }
+
+            if (string.IsNullOrWhiteSpace(Photo.ContentType) || !Photo.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            {
+                Error = "Invalid file type. Please upload a valid image.";
+                return Page();
+            }
+
             var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
             if (!Directory.Exists(uploadsDir))
                 Directory.CreateDirectory(uploadsDir);
 
-            var fileName = Path.GetFileName(Photo.FileName);
+            var fileName = $"{Guid.NewGuid():N}{extension.ToLowerInvariant()}";
             var filePath = Path.Combine(uploadsDir, fileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))

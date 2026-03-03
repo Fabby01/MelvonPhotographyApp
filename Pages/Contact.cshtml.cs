@@ -1,20 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
 
 namespace MRMstudios.Pages
 {
     public class ContactModel : PageModel
     {
         [BindProperty]
+        [Required]
+        [StringLength(100, MinimumLength = 2)]
         public string? Name { get; set; }
 
         [BindProperty]
+        [Required]
+        [EmailAddress]
+        [StringLength(200)]
         public string? Email { get; set; }
 
         [BindProperty]
+        [Required]
+        [StringLength(150, MinimumLength = 3)]
         public string? Subject { get; set; }
 
         [BindProperty]
+        [Required]
+        [StringLength(2000, MinimumLength = 5)]
         public string? Message { get; set; }
 
         public string? ConfirmationMessage { get; set; }

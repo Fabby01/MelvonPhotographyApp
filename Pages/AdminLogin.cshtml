@@ -19,6 +19,13 @@
             </div>
         }
 
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["Success"]
+            </div>
+        }
+
         <form method="post" class="login-form">
             <div class="form-group">
                 <label for="username" class="form-label">Username</label>
@@ -45,6 +52,15 @@
             <button type="submit" class="btn btn-primary w-100">
                 <span>Sign In</span>
             </button>
+        </form>
+
+        <form method="post" asp-page-handler="GeneratePassword" style="margin-top: 1rem;">
+            <button type="submit" class="btn btn-outline-secondary w-100">
+                Generate New Password and Email It
+            </button>
+            <p style="margin-top: 0.75rem; margin-bottom: 0; font-size: 0.85rem; color: var(--text-secondary);">
+                Sends the new password to <strong>mel.dimplz@gmail.com</strong>.
+            </p>
         </form>
 
         <div class="login-footer">
