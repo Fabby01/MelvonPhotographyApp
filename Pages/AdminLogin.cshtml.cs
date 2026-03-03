@@ -1,16 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MRMstudios.Services;
 
 namespace MRMstudios.Pages;
 
 public class AdminLoginModel : PageModel
 {
-    private readonly IAdminAuthService _adminAuthService;
+    private readonly IConfiguration _configuration;
 
-    public AdminLoginModel(IAdminAuthService adminAuthService)
+    public AdminLoginModel(IConfiguration configuration)
     {
-        _adminAuthService = adminAuthService;
+        _configuration = configuration;
     }
 
     [BindProperty]
@@ -25,7 +24,7 @@ public class AdminLoginModel : PageModel
         HttpContext.Session.Clear();
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public IActionResult OnPost()
     {
         if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
         {
@@ -33,8 +32,19 @@ public class AdminLoginModel : PageModel
             return Page();
         }
 
-        // Verify credentials against hashed stored password
-        var validCredentials = await _adminAuthService.ValidateCredentialsAsync(Username, Password);
+        var adminUsername = Environment.GetEnvironmentVariable("ADMIN_USERNAME")
+                            ?? _configuration["Admin:Username"]
+                            ?? "admin";
+        var adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD")
+                            ?? _configuration["Admin:Password"];
+
+        if (string.IsNullOrWhiteSpace(adminPassword))
+        {
+            TempData["Error"] = "Admin password is not configured. Set ADMIN_PASSWORD and restart the app.";
+            return Page();
+        }
+
+        var validCredentials = Username == adminUsername && Password == adminPassword;
         if (validCredentials)
         {
             // Set session cookie for authentication
@@ -46,23 +56,6 @@ public class AdminLoginModel : PageModel
 
         TempData["Error"] = "Invalid username or password. Please try again.";
         Password = string.Empty; // Clear password field for security
-        return Page();
-    }
-
-    public async Task<IActionResult> OnPostGeneratePasswordAsync()
-    {
-        HttpContext.Session.Clear();
-
-        var sent = await _adminAuthService.GenerateAndEmailNewPasswordAsync();
-        if (sent)
-        {
-            TempData["Success"] = "A new admin password was sent to fabiana.mkova2001@gmail.com.";
-        }
-        else
-        {
-            TempData["Error"] = "Could not send reset email to any admin address. Check SMTP settings and try again.";
-        }
-
         return Page();
     }
 }
