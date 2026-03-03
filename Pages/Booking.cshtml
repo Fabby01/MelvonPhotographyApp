@@ -4,176 +4,232 @@
     ViewData["Title"] = "Book a Session";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h1 class="mb-4">📅 Book Your Photography Session</h1>
+<div class="booking-hero">
+    <div class="container py-5">
+        <h1 class="booking-title">Book Your Photography Session</h1>
+        <p class="booking-subtitle">Select your perfect date and package</p>
+    </div>
+</div>
 
+<div class="container" style="padding-top: 3rem; padding-bottom: 3rem;">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            
             @if (!string.IsNullOrEmpty(Model.Message))
             {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @Model.Message
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 1.5rem;">
+                    <strong>✓ Success!</strong> @Model.Message
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
 
             @if (!string.IsNullOrEmpty(Model.Error))
             {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    @Model.Error
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 1.5rem;">
+                    <strong>✕ Error:</strong> @Model.Error
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
 
-            <form method="post" class="booking-form">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="fullName" class="form-label">Full Name *</label>
-                        <input type="text" class="form-control" id="fullName" asp-for="Booking.FullName" required>
-                        <span asp-validation-for="Booking.FullName" class="text-danger"></span>
-                    </div>
+            <div class="row">
+                <!-- Calendar Section -->
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button id="prevMonth" class="calendar-nav-btn">&larr;</button>
+                            <h3 id="currentMonth" style="flex: 1; text-align: center; margin: 0; font-size: 1.2rem; font-weight: 600;"></h3>
+                            <button id="nextMonth" class="calendar-nav-btn">&rarr;</button>
+                        </div>
+                        
+                        <div class="calendar-weekdays">
+                            <div class="weekday">Sun</div>
+                            <div class="weekday">Mon</div>
+                            <div class="weekday">Tue</div>
+                            <div class="weekday">Wed</div>
+                            <div class="weekday">Thu</div>
+                            <div class="weekday">Fri</div>
+                            <div class="weekday">Sat</div>
+                        </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label for="email" class="form-label">Email Address *</label>
-                        <input type="email" class="form-control" id="email" asp-for="Booking.Email" required>
-                        <span asp-validation-for="Booking.Email" class="text-danger"></span>
-                    </div>
-                </div>
+                        <div class="calendar-dates" id="calendarDates"></div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="phone" class="form-label">Phone Number *</label>
-                        <input type="tel" class="form-control" id="phone" asp-for="Booking.PhoneNumber" required>
-                        <span asp-validation-for="Booking.PhoneNumber" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label for="serviceType" class="form-label">Service Type *</label>
-                        <select class="form-select" id="serviceType" asp-for="Booking.ServiceType" required>
-                            <option value="">-- Select a Service --</option>
-                            @foreach (var service in Model.Services)
-                            {
-                                <option value="@service.Name">
-                                    @service.Name - $@service.Price
-                                </option>
-                            }
-                        </select>
-                        <span asp-validation-for="Booking.ServiceType" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="preferredDate" class="form-label">Preferred Date *</label>
-                    <input type="date" class="form-control" id="preferredDate" asp-for="Booking.PreferredDate" required>
-                    <span asp-validation-for="Booking.PreferredDate" class="text-danger"></span>
-                    <small class="form-text text-muted">📅 Please select from available dates (minimum 7 days in advance)</small>
-                    
-                    <div class="available-dates-info mt-3">
-                        <strong>📆 Available Dates (Next 3 Months):</strong>
-                        <div class="dates-list">
-                            @if (Model.AvailableDates.Any())
-                            {
-                                @foreach (var date in Model.AvailableDates.Take(15))
-                                {
-                                    <span class="badge bg-success">@date.ToString("MMM dd")</span>
-                                }
-                                @if (Model.AvailableDates.Count > 15)
-                                {
-                                    <span class="badge bg-info">+@(Model.AvailableDates.Count - 15) more dates</span>
-                                }
-                            }
-                            else
-                            {
-                                <span class="badge bg-warning">No dates available. Please contact us.</span>
-                            }
+                        <div class="calendar-legend">
+                            <div class="legend-item">
+                                <span class="legend-color available"></span>
+                                <span>Available</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color unavailable"></span>
+                                <span>Not Available</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color selected"></span>
+                                <span>Selected</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="specialNotes" class="form-label">Special Requests or Notes</label>
-                    <textarea class="form-control" id="specialNotes" asp-for="Booking.SpecialNotes" rows="4" placeholder="Any special requirements or notes about your session..."></textarea>
+                <!-- Booking Form Section -->
+                <div class="col-lg-6">
+                    <form method="post" class="booking-form">
+                        
+                        <!-- Contact Information Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">Contact Information</h3>
+                            <div class="form-grid-2">
+                                <div>
+                                    <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
+                                    <input type="text" class="form-control" id="fullName" asp-for="Booking.FullName" placeholder="Your full name" required>
+                                    <span asp-validation-for="Booking.FullName" class="text-danger" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
+                                </div>
+
+                                <div>
+                                    <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                                    <input type="email" class="form-control" id="email" asp-for="Booking.Email" placeholder="your@email.com" required>
+                                    <span asp-validation-for="Booking.Email" class="text-danger" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 1rem;">
+                                <label for="phone" class="form-label">Phone Number <span class="required">*</span></label>
+                                <input type="tel" class="form-control" id="phone" asp-for="Booking.PhoneNumber" placeholder="+1 (555) 000-0000" required>
+                                <span asp-validation-for="Booking.PhoneNumber" class="text-danger" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
+                            </div>
+                        </div>
+
+                        <!-- Session Details Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">Session Details</h3>
+                            <div>
+                                <label for="serviceType" class="form-label">Service Type <span class="required">*</span></label>
+                                <select class="form-select" id="serviceType" asp-for="Booking.ServiceType" required>
+                                    <option value="">Choose a service...</option>
+                                    @foreach (var service in Model.Services)
+                                    {
+                                        <option value="@service.Name">
+                                            @service.Name - $@service.Price
+                                        </option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Booking.ServiceType" class="text-danger" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
+                            </div>
+
+                            <div style="margin-top: 1rem;">
+                                <label for="preferredDate" class="form-label">Selected Date <span class="required">*</span></label>
+                                <input type="date" class="form-control" id="preferredDate" asp-for="Booking.PreferredDate" required>
+                                <span asp-validation-for="Booking.PreferredDate" class="text-danger" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
+                                <small style="color: #666; display: block; margin-top: 0.5rem;">Minimum 7 days in advance</small>
+                            </div>
+                        </div>
+
+                        <!-- Special Requests Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">Special Requests</h3>
+                            <label for="specialNotes" class="form-label">Any Special Requests or Notes?</label>
+                            <textarea class="form-control" id="specialNotes" asp-for="Booking.SpecialNotes" rows="3" placeholder="Tell us about your vision, any specific requirements, or special details..."></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                            <button type="submit" class="btn btn-primary" style="flex: 1; min-height: 52px;">
+                                Submit Booking Request
+                            </button>
+                        </div>
+                    </form>
                 </div>
+            </div>
 
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        📸 Submit Booking Request
-                    </button>
-                </div>
-            </form>
-
-            <hr class="my-5">
-
-            <div class="info-section">
-                <h4>📞 Need Help?</h4>
-                <p>If you have any questions, feel free to <a href="/Contact">contact us directly</a>.</p>
+            <!-- Help Section -->
+            <div class="help-section" style="margin-top: 3rem; padding: 2rem; background-color: var(--light-bg); border-radius: var(--radius); border: 1px solid var(--border-color);">
+                <h4 style="margin-bottom: 1rem; font-size: 1.1rem;">Questions?</h4>
+                <p style="margin-bottom: 0;">We're here to help! <a href="/Contact">Contact us directly</a> if you have any questions about our services.</p>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-    .booking-form {
-        background-color: #f8f9fa;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+<script>
+    // Get available dates from the server
+    const availableDatesStr = '@string.Join(",", Model.AvailableDates.Select(d => d.ToString("yyyy-MM-dd")))';
+    const availableDates = new Set(availableDatesStr.split(',').filter(d => d));
+
+    let currentDate = new Date();
+    const dateInput = document.getElementById('preferredDate');
+
+    // Initialize calendar
+    function renderCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        
+        document.getElementById('currentMonth').textContent = 
+            currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const startDate = new Date(firstDay);
+        startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+        const calendarDates = document.getElementById('calendarDates');
+        calendarDates.innerHTML = '';
+
+        let currentCell = new Date(startDate);
+        for (let i = 0; i < 42; i++) {
+            const dateDiv = document.createElement('div');
+            dateDiv.className = 'calendar-date';
+
+            const dateStr = currentCell.toISOString().split('T')[0];
+            const isCurrentMonth = currentCell.getMonth() === month;
+            const isAvailable = availableDates.has(dateStr);
+            const isSelected = dateInput.value === dateStr;
+
+            if (!isCurrentMonth) {
+                dateDiv.className += ' other-month';
+            } else if (isSelected) {
+                dateDiv.className += ' selected';
+            } else if (isAvailable) {
+                dateDiv.className += ' available';
+                dateDiv.style.cursor = 'pointer';
+                dateDiv.addEventListener('click', () => {
+                    dateInput.value = dateStr;
+                    renderCalendar();
+                });
+            } else {
+                dateDiv.className += ' unavailable';
+            }
+
+            dateDiv.textContent = currentCell.getDate();
+            calendarDates.appendChild(dateDiv);
+            currentCell.setDate(currentCell.getDate() + 1);
+        }
     }
 
-    .form-label {
-        font-weight: 600;
-        margin-bottom: 8px;
-        color: #333;
-    }
+    // Navigation
+    document.getElementById('prevMonth').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+    });
 
-    .form-control, .form-select {
-        border-radius: 4px;
-        border: 1px solid #ddd;
-    }
+    document.getElementById('nextMonth').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+    });
 
-    .form-control:focus, .form-select:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-    }
+    // Update calendar when date input changes
+    dateInput.addEventListener('change', () => {
+        if (dateInput.value) {
+            currentDate = new Date(dateInput.value);
+            renderCalendar();
+        }
+    });
 
-    .btn-primary {
-        background-color: #0d6efd;
-        border: none;
-        font-weight: 600;
-        transition: background-color 0.3s ease;
-    }
+    // Initial render
+    renderCalendar();
+</script>
 
-    .btn-primary:hover {
-        background-color: #0b5ed7;
-    }
-
-    .info-section {
-        background-color: #e7f3ff;
-        padding: 20px;
-        border-left: 4px solid #0d6efd;
-        border-radius: 4px;
-    }
-
-    .available-dates-info {
-        background-color: #f0f8ff;
-        padding: 15px;
-        border-left: 4px solid #28a745;
-        border-radius: 4px;
-    }
-
-    .dates-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 10px;
-    }
-
-    .dates-list .badge {
-        padding: 8px 12px;
-        font-size: 0.9rem;
-    }
-
-</style>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
