@@ -14,7 +14,6 @@ namespace MRMstudios.Services
         private const string AdminUsername = "admin";
         private static readonly string[] AdminEmails =
         {
-            "mel.dimplz@gmail.com",
             "fabiana.mkova2001@gmail.com"
         };
         private readonly string _authFilePath;
