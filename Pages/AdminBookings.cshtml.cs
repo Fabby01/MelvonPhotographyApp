@@ -54,6 +54,14 @@ namespace MRMstudios.Pages
             var booking = await _bookingService.UpdateBookingStatusAsync(id, "Confirmed");
             if (booking != null)
             {
+                TempData["ShowConfirmPopup"] = "true";
+                TempData["PopupAction"] = "Confirmed";
+                TempData["ConfirmClientName"] = booking.FullName;
+                TempData["ConfirmClientEmail"] = booking.Email;
+                TempData["ConfirmClientPhone"] = booking.PhoneNumber;
+                TempData["ConfirmService"] = booking.ServiceType;
+                TempData["ConfirmDate"] = booking.PreferredDate.ToString("dddd, MMMM d, yyyy");
+
                 _ = Task.Run(async () =>
                 {
                     try
@@ -82,7 +90,17 @@ namespace MRMstudios.Pages
                 return RedirectToPage("/AdminLogin");
             }
 
-            await _bookingService.UpdateBookingStatusAsync(id, "Cancelled");
+            var booking = await _bookingService.UpdateBookingStatusAsync(id, "Cancelled");
+            if (booking != null)
+            {
+                TempData["ShowConfirmPopup"] = "true";
+                TempData["PopupAction"] = "Cancelled";
+                TempData["ConfirmClientName"] = booking.FullName;
+                TempData["ConfirmClientEmail"] = booking.Email;
+                TempData["ConfirmClientPhone"] = booking.PhoneNumber;
+                TempData["ConfirmService"] = booking.ServiceType;
+                TempData["ConfirmDate"] = booking.PreferredDate.ToString("dddd, MMMM d, yyyy");
+            }
             return RedirectToPage();
         }
 

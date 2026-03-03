@@ -2,6 +2,22 @@
 @model MRMstudios.Pages.AdminBookingsModel
 @{
     ViewData["Title"] = "Admin Dashboard - Manage Bookings";
+    var showConfirmPopup = TempData["ShowConfirmPopup"]?.ToString() == "true";
+    var popupName = TempData["ConfirmClientName"]?.ToString() ?? "Customer";
+    var popupEmail = TempData["ConfirmClientEmail"]?.ToString() ?? string.Empty;
+    var popupPhone = TempData["ConfirmClientPhone"]?.ToString() ?? string.Empty;
+    var popupService = TempData["ConfirmService"]?.ToString() ?? "Photography Session";
+    var popupDate = TempData["ConfirmDate"]?.ToString() ?? string.Empty;
+    var popupAction = TempData["PopupAction"]?.ToString() ?? "Confirmed";
+    var isCancelledAction = popupAction == "Cancelled";
+    var whatsappPhone = new string(popupPhone.Where(char.IsDigit).ToArray());
+    var whatsappMessage = Uri.EscapeDataString(
+        isCancelledAction
+            ? $"Hi {popupName}, your {popupService} booking for {popupDate} has been cancelled. Please reply if you want to reschedule."
+            : $"Hi {popupName}, your {popupService} booking for {popupDate} has been confirmed. Please reply so we can finalize your session details.");
+    var whatsappUrl = string.IsNullOrWhiteSpace(whatsappPhone)
+        ? string.Empty
+        : $"https://wa.me/{whatsappPhone}?text={whatsappMessage}";
 }
 
 <div class="admin-header">
@@ -130,6 +146,61 @@
         </div>
     }
 </div>
+
+@if (showConfirmPopup)
+{
+    <div class="modal fade" id="confirmContactModal" tabindex="-1" aria-labelledby="confirmContactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmContactModalLabel">Booking @popupAction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>@popupName</strong> has been marked as @popupAction.ToLowerInvariant().</p>
+                    @if (isCancelledAction)
+                    {
+                        <p>Please contact the customer now to inform them the booking is cancelled and discuss rescheduling.</p>
+                    }
+                    else
+                    {
+                        <p>Please contact the customer now to finalize details and inform them the booking is confirmed.</p>
+                    }
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:0.75rem; font-size:0.92rem;">
+                        <div><strong>Service:</strong> @popupService</div>
+                        <div><strong>Date:</strong> @popupDate</div>
+                        <div><strong>Email:</strong> @popupEmail</div>
+                        <div><strong>Phone:</strong> @popupPhone</div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                    @if (!string.IsNullOrWhiteSpace(popupEmail))
+                    {
+                        <a class="btn btn-primary" href="mailto:@popupEmail?subject=Your%20booking%20is%20@popupAction.ToLowerInvariant()">Email Customer</a>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(popupPhone))
+                    {
+                        <a class="btn btn-success" href="tel:@popupPhone">Call Customer</a>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(whatsappUrl))
+                    {
+                        <a class="btn btn-outline-success" href="@whatsappUrl" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                    }
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modalElement = document.getElementById('confirmContactModal');
+            if (!modalElement || typeof bootstrap === 'undefined') return;
+            var modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        });
+    </script>
+}
 
 <style>
 /* Admin Header */

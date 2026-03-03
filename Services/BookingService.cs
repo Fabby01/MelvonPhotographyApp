@@ -22,12 +22,35 @@ namespace MRMstudios.Services
     {
         private readonly string _bookingsFilePath;
         private readonly List<Service> _services;
+        private readonly ILogger<BookingService> _logger;
+        private readonly SemaphoreSlim _fileLock = new(1, 1);
 
-        public BookingService(IWebHostEnvironment environment)
+        public BookingService(IWebHostEnvironment environment, IConfiguration configuration, ILogger<BookingService> logger)
         {
-            var dataDir = Path.Combine(environment.ContentRootPath, "App_Data");
-            Directory.CreateDirectory(dataDir);
-            _bookingsFilePath = Path.Combine(dataDir, "bookings.json");
+            _logger = logger;
+
+            var configuredPath = Environment.GetEnvironmentVariable("BOOKINGS_FILE_PATH")
+                                 ?? configuration["Storage:BookingsFilePath"];
+
+            if (!string.IsNullOrWhiteSpace(configuredPath))
+            {
+                _bookingsFilePath = configuredPath;
+            }
+            else
+            {
+                var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                var dataDir = Path.Combine(localAppData, "MRMstudios");
+                _bookingsFilePath = Path.Combine(dataDir, "bookings.json");
+            }
+
+            var targetDir = Path.GetDirectoryName(_bookingsFilePath);
+            if (!string.IsNullOrWhiteSpace(targetDir))
+            {
+                Directory.CreateDirectory(targetDir);
+            }
+
+            TryMigrateLegacyBookingsFile(environment);
+
             _services = new List<Service>
             {
                 new Service { Id = 1, Name = "Wedding Photography", Price = 800, Description = "Full day wedding coverage with multiple locations" },
@@ -39,17 +62,28 @@ namespace MRMstudios.Services
 
         public async Task<List<Booking>> GetAllBookingsAsync()
         {
+            await _fileLock.WaitAsync();
             try
             {
                 if (!File.Exists(_bookingsFilePath))
                     return new List<Booking>();
 
                 var json = await File.ReadAllTextAsync(_bookingsFilePath);
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    return new List<Booking>();
+                }
+
                 return JsonSerializer.Deserialize<List<Booking>>(json) ?? new List<Booking>();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to read bookings from {BookingsFilePath}", _bookingsFilePath);
                 return new List<Booking>();
+            }
+            finally
+            {
+                _fileLock.Release();
             }
         }
 
@@ -192,8 +226,46 @@ namespace MRMstudios.Services
 
         private async Task SaveBookingsAsync(List<Booking> bookings)
         {
-            var json = JsonSerializer.Serialize(bookings, new JsonSerializerOptions { WriteIndented = true });
-            await File.WriteAllTextAsync(_bookingsFilePath, json);
+            await _fileLock.WaitAsync();
+            try
+            {
+                var json = JsonSerializer.Serialize(bookings, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(_bookingsFilePath, json);
+            }
+            finally
+            {
+                _fileLock.Release();
+            }
+        }
+
+        private void TryMigrateLegacyBookingsFile(IWebHostEnvironment environment)
+        {
+            try
+            {
+                if (File.Exists(_bookingsFilePath))
+                {
+                    return;
+                }
+
+                var legacyCandidates = new[]
+                {
+                    Path.Combine(environment.ContentRootPath, "App_Data", "bookings.json"),
+                    Path.Combine(environment.WebRootPath ?? string.Empty, "bookings.json")
+                };
+
+                var source = legacyCandidates.FirstOrDefault(File.Exists);
+                if (string.IsNullOrWhiteSpace(source))
+                {
+                    return;
+                }
+
+                File.Copy(source, _bookingsFilePath, overwrite: false);
+                _logger.LogInformation("Migrated bookings file from {Source} to {Target}", source, _bookingsFilePath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to migrate legacy bookings file to {Target}", _bookingsFilePath);
+            }
         }
     }
 }
