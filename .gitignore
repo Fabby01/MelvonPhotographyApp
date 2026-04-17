@@ -1,0 +1,26 @@
+## Ignore Visual Studio temporary files, build results, and cache files
+
+# Build results
+bin/
+obj/
+.vs/
+
+# VS Code
+.vscode/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Local History for Visual Studio Code
+.history/
+
+# Output files
+out/
+
+# Environment files (if they contain sensitive data)
+appsettings.Development.json
+.env
