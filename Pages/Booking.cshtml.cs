@@ -33,6 +33,8 @@ namespace MRMstudios.Pages
         {
             Services = _bookingService.GetServices();
             AvailableDates = await _bookingService.GetAvailableDatesAsync();
+            // Set default date to 7 days from today to meet minimum advance booking requirement
+            Booking.PreferredDate = DateTime.Today.AddDays(7);
         }
 
         public async Task<IActionResult> OnPostAsync()
