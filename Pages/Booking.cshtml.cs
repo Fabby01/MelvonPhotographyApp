@@ -8,15 +8,18 @@ namespace MRMstudios.Pages
     public class BookingModel : PageModel
     {
         private readonly IBookingService _bookingService;
+        private readonly IContentService _contentService;
         private readonly IEmailService _emailService;
         private readonly ILogger<BookingModel> _logger;
 
         public BookingModel(
             IBookingService bookingService,
+            IContentService contentService,
             IEmailService emailService,
             ILogger<BookingModel> logger)
         {
             _bookingService = bookingService;
+            _contentService = contentService;
             _emailService = emailService;
             _logger = logger;
         }
@@ -31,15 +34,14 @@ namespace MRMstudios.Pages
 
         public async Task OnGetAsync()
         {
-            Services = _bookingService.GetServices();
+            Services = await _contentService.GetServicesAsync();
             AvailableDates = await _bookingService.GetAvailableDatesAsync();
-            // Set default date to 7 days from today to meet minimum advance booking requirement
             Booking.PreferredDate = DateTime.Today.AddDays(7);
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            Services = _bookingService.GetServices();
+            Services = await _contentService.GetServicesAsync();
             AvailableDates = await _bookingService.GetAvailableDatesAsync();
 
             Booking.FullName = Booking.FullName?.Trim() ?? string.Empty;

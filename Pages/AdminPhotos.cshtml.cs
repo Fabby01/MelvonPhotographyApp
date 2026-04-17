@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MRMstudios.Models;
 using System.Text.Json;
 
 namespace MRMstudios.Pages
@@ -166,10 +167,5 @@ namespace MRMstudios.Pages
             System.IO.File.WriteAllText(filePath, json);
         }
     }
-
-    public class GalleryImage
-    {
-        public string Src { get; set; } = string.Empty;
-        public string Caption { get; set; } = string.Empty;
-    }
 }
+

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MRMstudios.Models;
+using MRMstudios.Services;
 using System.Text.Json;
 
 namespace MRMstudios.Pages
@@ -7,11 +9,13 @@ namespace MRMstudios.Pages
     public class AdminGalleryModel : PageModel
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IContentService _contentService;
         private readonly ILogger<AdminGalleryModel> _logger;
 
-        public AdminGalleryModel(IWebHostEnvironment webHostEnvironment, ILogger<AdminGalleryModel> logger)
+        public AdminGalleryModel(IWebHostEnvironment webHostEnvironment, IContentService contentService, ILogger<AdminGalleryModel> logger)
         {
             _webHostEnvironment = webHostEnvironment;
+            _contentService = contentService;
             _logger = logger;
         }
 
@@ -23,22 +27,20 @@ namespace MRMstudios.Pages
         [BindProperty]
         public string CurrentSection { get; set; } = "portfolio";
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-            var isAuthenticated = HttpContext.Session.GetString("AdminAuthenticated") == "true";
-            if (!isAuthenticated)
+            if (HttpContext.Session.GetString("AdminAuthenticated") != "true")
             {
                 return RedirectToPage("/AdminLogin");
             }
 
-            LoadAllPhotos();
+            await LoadAllPhotosAsync();
             return Page();
         }
 
         public async Task<IActionResult> OnPostUploadAsync(IFormFile file, string section)
         {
-            var isAuthenticated = HttpContext.Session.GetString("AdminAuthenticated") == "true";
-            if (!isAuthenticated)
+            if (HttpContext.Session.GetString("AdminAuthenticated") != "true")
             {
                 return RedirectToPage("/AdminLogin");
             }
@@ -46,7 +48,7 @@ namespace MRMstudios.Pages
             if (file == null || file.Length == 0)
             {
                 Error = "Please select a file to upload.";
-                LoadAllPhotos();
+                await LoadAllPhotosAsync();
                 return Page();
             }
 
@@ -57,7 +59,7 @@ namespace MRMstudios.Pages
                 if (!allowedExtensions.Contains(fileExtension))
                 {
                     Error = "Only image files (JPG, PNG, GIF, WEBP) are allowed.";
-                    LoadAllPhotos();
+                    await LoadAllPhotosAsync();
                     return Page();
                 }
 
@@ -84,23 +86,15 @@ namespace MRMstudios.Pages
                 }
                 else
                 {
-                    var sectionsJsonPath = Path.Combine(_webHostEnvironment.WebRootPath, "sections.json");
-                    var sections = LoadSectionsFromJson(sectionsJsonPath);
-                    
-                    if (!sections.ContainsKey(section))
-                    {
-                        sections[section] = new SectionPhoto();
-                    }
-
+                    var sections = await _contentService.GetSectionPhotosAsync();
                     sections[section] = new SectionPhoto
                     {
                         Src = $"/images/{fileName}",
                         Caption = Path.GetFileNameWithoutExtension(file.FileName),
                         UpdatedAt = DateTime.Now
                     };
-
-                    SaveSectionsToJson(sectionsJsonPath, sections);
-                    Message = $"Background photo for '{section}' updated successfully!";
+                    await _contentService.SaveSectionPhotosAsync(sections);
+                    Message = $"Photo for '{section}' updated successfully!";
                 }
 
                 _logger.LogInformation("Image uploaded by admin to section '{Section}': {FileName}", section, fileName);
@@ -111,14 +105,13 @@ namespace MRMstudios.Pages
                 _logger.LogError(ex, "Error uploading image to section {Section}", section);
             }
 
-            LoadAllPhotos();
+            await LoadAllPhotosAsync();
             return Page();
         }
 
-        public IActionResult OnPostDelete(string imageUrl, string section)
+        public async Task<IActionResult> OnPostDeleteAsync(string imageUrl, string section)
         {
-            var isAuthenticated = HttpContext.Session.GetString("AdminAuthenticated") == "true";
-            if (!isAuthenticated)
+            if (HttpContext.Session.GetString("AdminAuthenticated") != "true")
             {
                 return RedirectToPage("/AdminLogin");
             }
@@ -134,15 +127,12 @@ namespace MRMstudios.Pages
                 }
                 else
                 {
-                    var sectionsJsonPath = Path.Combine(_webHostEnvironment.WebRootPath, "sections.json");
-                    var sections = LoadSectionsFromJson(sectionsJsonPath);
-                    
+                    var sections = await _contentService.GetSectionPhotosAsync();
                     if (sections.ContainsKey(section))
                     {
                         sections.Remove(section);
+                        await _contentService.SaveSectionPhotosAsync(sections);
                     }
-
-                    SaveSectionsToJson(sectionsJsonPath, sections);
                 }
 
                 var fileName = Path.GetFileName(imageUrl);
@@ -161,21 +151,17 @@ namespace MRMstudios.Pages
                 _logger.LogError(ex, "Error deleting image from section {Section}", section);
             }
 
-            LoadAllPhotos();
+            await LoadAllPhotosAsync();
             return Page();
         }
 
-        private void LoadAllPhotos()
+        private async Task LoadAllPhotosAsync()
         {
             try
             {
-                // Load portfolio images
                 var imagesJsonPath = Path.Combine(_webHostEnvironment.WebRootPath, "images.json");
                 PortfolioImages = LoadImagesFromJson(imagesJsonPath);
-
-                // Load section photos
-                var sectionsJsonPath = Path.Combine(_webHostEnvironment.WebRootPath, "sections.json");
-                SectionPhotos = LoadSectionsFromJson(sectionsJsonPath);
+                SectionPhotos = await _contentService.GetSectionPhotosAsync();
             }
             catch (Exception ex)
             {
@@ -192,38 +178,10 @@ namespace MRMstudios.Pages
             return JsonSerializer.Deserialize<List<GalleryImage>>(json) ?? new List<GalleryImage>();
         }
 
-        private Dictionary<string, SectionPhoto> LoadSectionsFromJson(string filePath)
-        {
-            if (!System.IO.File.Exists(filePath))
-                return new Dictionary<string, SectionPhoto>();
-
-            var json = System.IO.File.ReadAllText(filePath);
-            return JsonSerializer.Deserialize<Dictionary<string, SectionPhoto>>(json) ?? new Dictionary<string, SectionPhoto>();
-        }
-
         private void SaveImagesToJson(string filePath, List<GalleryImage> images)
         {
             var json = JsonSerializer.Serialize(images, new JsonSerializerOptions { WriteIndented = true });
             System.IO.File.WriteAllText(filePath, json);
         }
-
-        private void SaveSectionsToJson(string filePath, Dictionary<string, SectionPhoto> sections)
-        {
-            var json = JsonSerializer.Serialize(sections, new JsonSerializerOptions { WriteIndented = true });
-            System.IO.File.WriteAllText(filePath, json);
-        }
-    }
-
-    public class GalleryImage
-    {
-        public string Src { get; set; } = string.Empty;
-        public string Caption { get; set; } = string.Empty;
-    }
-
-    public class SectionPhoto
-    {
-        public string Src { get; set; } = string.Empty;
-        public string Caption { get; set; } = string.Empty;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
     }
 }

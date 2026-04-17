@@ -8,11 +8,13 @@ namespace MRMstudios.Pages
     public class BookingConfirmationModel : PageModel
     {
         private readonly IBookingService _bookingService;
+        private readonly IContentService _contentService;
         private readonly ILogger<BookingConfirmationModel> _logger;
 
-        public BookingConfirmationModel(IBookingService bookingService, ILogger<BookingConfirmationModel> logger)
+        public BookingConfirmationModel(IBookingService bookingService, IContentService contentService, ILogger<BookingConfirmationModel> logger)
         {
             _bookingService = bookingService;
+            _contentService = contentService;
             _logger = logger;
         }
 
@@ -40,7 +42,7 @@ namespace MRMstudios.Pages
                 Booking = booking;
 
                 // Get service price
-                var services = _bookingService.GetServices();
+                var services = await _contentService.GetServicesAsync();
                 var service = services.FirstOrDefault(s => s.Name == booking.ServiceType);
                 ServicePrice = service?.Price ?? 0;
 

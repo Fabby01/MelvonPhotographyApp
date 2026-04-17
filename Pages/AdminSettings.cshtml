@@ -1,0 +1,137 @@
+@page
+@model MRMstudios.Pages.AdminSettingsModel
+@{
+    ViewData["Title"] = "Manage Packages";
+}
+
+<section class="admin-header">
+    <div class="container">
+        <div class="admin-header-content">
+            <div>
+                <h1>Package Management</h1>
+                <p>Update package names, pricing, and descriptions from the admin panel.</p>
+            </div>
+            <div class="admin-actions">
+                <a href="/AdminBookings" class="btn btn-outline-primary">Back to Admin</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container page-section">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> @Model.Message
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error</strong> @Model.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Add New Package</h5>
+                    <form method="post" asp-page-handler="AddService">
+                        <div class="mb-3">
+                            <label class="form-label" for="NewService_Name">Package Name</label>
+                            <input asp-for="NewService.Name" class="form-control" id="NewService_Name" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="NewService_Price">Price</label>
+                            <input asp-for="NewService.Price" class="form-control" id="NewService_Price" type="number" min="1" step="0.01" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="NewService_Description">Description</label>
+                            <textarea asp-for="NewService.Description" class="form-control" id="NewService_Description" rows="4"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Add Package</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Existing Packages</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th class="text-end">Price</th>
+                                    <th>Description</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var service in Model.Services)
+                                {
+                                    <tr>
+                                        <td>@service.Name</td>
+                                        <td class="text-end">$@service.Price</td>
+                                        <td>@service.Description</td>
+                                        <td class="text-end">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#edit-@service.Id" aria-expanded="false" aria-controls="edit-@service.Id">Edit</button>
+                                            <form method="post" asp-page-handler="DeleteService" class="d-inline-block ms-2">
+                                                <input type="hidden" name="id" value="@service.Id" />
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this package?');">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <tr class="collapse" id="edit-@service.Id">
+                                        <td colspan="4">
+                                            <form method="post" asp-page-handler="UpdateService" class="row g-3">
+                                                <input type="hidden" name="id" value="@service.Id" />
+                                                <div class="col-md-4">
+                                                    <input name="name" class="form-control" value="@service.Name" required />
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input name="price" type="number" min="1" step="0.01" class="form-control" value="@service.Price" required />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <input name="description" class="form-control" value="@service.Description" />
+                                                </div>
+                                                <div class="col-md-1 text-end">
+                                                    <button type="submit" class="btn btn-sm btn-success">Save</button>
+                                                </div>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.admin-header {
+    padding: 3rem 0;
+    background: linear-gradient(135deg, #18231f 0%, #1f6f5b 100%);
+    color: white;
+}
+
+.admin-header h1 {
+    margin-bottom: 0.3rem;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.collapse {
+    transition: height 180ms ease;
+}
+</style>

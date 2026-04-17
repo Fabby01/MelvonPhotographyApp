@@ -4,7 +4,7 @@
     ViewData["Title"] = "Home";
 }
 
-<section class="hero-section">
+<section class="hero-section" style="background-image: linear-gradient(90deg, rgba(18, 18, 18, 0.76), rgba(18, 18, 18, 0.4) 46%, rgba(18, 18, 18, 0.08)), url('@(Model.HeroBackgroundUrl ?? "/images/wedding.jpg")');">
     <div class="container">
         <div class="hero-inner">
             <div class="eyebrow">MRMstudios Photography</div>
@@ -62,8 +62,8 @@
             </div>
             <div class="col-lg-6">
                 <div class="about-image-grid">
-                    <img src="/images/event.jpg" alt="Event photography reception">
-                    <img src="/images/coporate.jpg" alt="Corporate photography session">
+                    <img src="@(Model.AboutPhotoLeft ?? "/images/event.jpg")" alt="About photo left">
+                    <img src="@(Model.AboutPhotoRight ?? "/images/coporate.jpg")" alt="About photo right">
                 </div>
             </div>
         </div>
