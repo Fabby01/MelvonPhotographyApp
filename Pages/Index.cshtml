@@ -31,10 +31,7 @@
             <p class="section-kicker">A focused selection of events, celebrations, and portrait sessions.</p>
         </div>
 
-        <div class="upload-controls">
-            <input type="file" id="fileInput" accept="image/*" multiple hidden>
-            <button id="addPhotosBtn" class="btn btn-outline-primary" type="button">Add Photos</button>
-        </div>
+        <!-- Photo uploads managed by admin only -->
 
         <div class="gallery" id="gallery">
             <!-- Images will load here -->
@@ -169,32 +166,7 @@
         });
     }
 
-    // Add photos from local device
-    const addPhotosBtn = document.getElementById("addPhotosBtn");
-    const fileInput = document.getElementById("fileInput");
-
-    addPhotosBtn.addEventListener("click", () => fileInput.click());
-
-    fileInput.addEventListener("change", (event) => {
-        const files = event.target.files;
-        if (!files.length) return;
-        const gallery = document.getElementById("gallery");
-
-        for (const file of files) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const div = document.createElement("div");
-                div.className = "gallery-item";
-                div.innerHTML = `
-                    <img src="${e.target.result}" alt="${file.name}">
-                    <div class="caption">${file.name}</div>
-                `;
-                div.addEventListener("click", () => openLightbox(e.target.result, file.name));
-                gallery.appendChild(div);
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+    // Photo uploads are now managed from Admin page only
 
     // Lightbox functions
     const lightbox = document.getElementById("lightbox");

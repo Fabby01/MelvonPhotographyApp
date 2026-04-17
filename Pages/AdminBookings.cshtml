@@ -27,9 +27,12 @@
                 <h1>Booking Management</h1>
                 <p>Manage customer bookings and session scheduling.</p>
             </div>
-            <form method="post" asp-page-handler="Logout" class="logout-form">
-                <button type="submit" class="btn btn-danger">Sign Out</button>
-            </form>
+            <div class="admin-actions">
+                <a href="/AdminPhotos" class="btn btn-outline-primary">Manage Photos</a>
+                <form method="post" asp-page-handler="Logout" class="logout-form">
+                    <button type="submit" class="btn btn-danger">Sign Out</button>
+                </form>
+            </div>
         </div>
     </div>
 </section>

@@ -1,0 +1,152 @@
+@page
+@model MRMstudios.Pages.AdminPhotosModel
+@{
+    ViewData["Title"] = "Manage Portfolio Photos";
+}
+
+<section class="page-hero">
+    <div class="container">
+        <h1>Manage Portfolio Photos</h1>
+        <p>Upload and manage the images displayed in your public gallery</p>
+    </div>
+</section>
+
+<div class="container page-section">
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Success!</strong> @Model.Message
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error</strong> @Model.Error
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Upload New Photo</h5>
+                    <form method="post" asp-page-handler="Upload" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="fileUpload" class="form-label">Choose Image File <span class="required">*</span></label>
+                            <input type="file" class="form-control" id="fileUpload" name="file" accept="image/*" required>
+                            <small class="form-text text-muted">Supported formats: JPG, PNG, GIF, WEBP (Max 10MB)</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <span>Upload Photo</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Current Gallery Images (@Model.GalleryImages.Count)</h5>
+                    
+                    @if (Model.GalleryImages.Count == 0)
+                    {
+                        <p class="text-muted">No images in the gallery yet. Upload your first photo above!</p>
+                    }
+                    else
+                    {
+                        <div class="admin-gallery">
+                            @foreach (var image in Model.GalleryImages)
+                            {
+                                <div class="admin-gallery-item">
+                                    <img src="@image.Src" alt="@image.Caption" class="admin-gallery-img">
+                                    <div class="admin-gallery-info">
+                                        <p class="admin-gallery-caption">@image.Caption</p>
+                                        <form method="post" asp-page-handler="Delete" style="display: inline;">
+                                            <input type="hidden" name="imageUrl" value="@image.Src">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this image?');">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Help</h5>
+                    <ul class="small">
+                        <li>Images are displayed in the order they were uploaded</li>
+                        <li>Use high-resolution photos for best quality</li>
+                        <li>Recommended dimensions: 1200x1000px or larger</li>
+                        <li>Only you (admin) can manage photos</li>
+                        <li>Deleted images are permanently removed</li>
+                    </ul>
+                    <hr>
+                    <a href="/AdminBookings" class="btn btn-outline-primary w-100">Back to Admin</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.page-hero {
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+}
+
+.page-hero h1 {
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.admin-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.admin-gallery-item {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: box-shadow var(--transition);
+}
+
+.admin-gallery-item:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.admin-gallery-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.admin-gallery-info {
+    padding: 0.75rem;
+    background: var(--paper);
+}
+
+.admin-gallery-caption {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+</style>
