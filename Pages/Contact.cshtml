@@ -4,14 +4,16 @@
     ViewData["Title"] = "Contact Us";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="contact-header text-center mb-5">
-                <h1>📞 Contact Us</h1>
-                <p class="lead text-muted">Have questions? We'd love to hear from you!</p>
-            </div>
+<section class="page-hero">
+    <div class="container">
+        <h1>Contact MRMstudios</h1>
+        <p>Ask about availability, packages, or a custom photography session.</p>
+    </div>
+</section>
 
+<div class="container page-section">
+    <div class="row justify-content-center g-5">
+        <div class="col-lg-7">
             @if (!string.IsNullOrEmpty(Model.ConfirmationMessage))
             {
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -41,134 +43,52 @@
 
                 <div class="mb-3">
                     <label for="subject" class="form-label">Subject *</label>
-                    <input type="text" class="form-control" id="subject" asp-for="Subject" placeholder="e.g., Inquiry about wedding package" required>
+                    <input type="text" class="form-control" id="subject" asp-for="Subject" placeholder="Wedding package inquiry" required>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-4">
                     <label for="message" class="form-label">Message *</label>
-                    <textarea class="form-control" id="message" asp-for="Message" rows="6" placeholder="Tell us more about your inquiry..." required></textarea>
+                    <textarea class="form-control" id="message" asp-for="Message" rows="6" placeholder="Tell us about your date, location, and session goals." required></textarea>
                 </div>
 
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary btn-lg">Send Message</button>
-                </div>
+                <button type="submit" class="btn btn-primary w-100">Send Message</button>
             </form>
+        </div>
 
-            <hr class="my-5">
-
-            <div class="row">
-                <div class="col-md-4 text-center mb-4">
-                    <div class="contact-info">
-                        <h5>📧 Email</h5>
-                        <p><a href="mailto:mel.dimplz@gmail.com">mel.dimplz@gmail.com</a></p>
-                    </div>
-                </div>
-                <div class="col-md-4 text-center mb-4">
-                    <div class="contact-info">
-                        <h5>📱 Phone</h5>
-                        <p><a href="tel:+46708417437">+46 70 841 7437</a></p>
-                    </div>
-                </div>
-                <div class="col-md-4 text-center mb-4">
-                    <div class="contact-info">
-                        <h5>📍 Location</h5>
-                        <p>Gweru Zimbabwe</p>
-                    </div>
-                </div>
+        <div class="col-lg-5">
+            <div class="section-heading text-start mb-4">
+                <div class="eyebrow">Details</div>
+                <h2>Plan the next step.</h2>
+                <p>Send a message with your preferred date and service type. We will reply with availability and booking details.</p>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-md-12">
+            <div class="row g-3">
+                <div class="col-md-6 col-lg-12">
+                    <div class="contact-info">
+                        <h5>Email</h5>
+                        <p class="mb-0"><a href="mailto:mel.dimplz@gmail.com">mel.dimplz@gmail.com</a></p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-12">
+                    <div class="contact-info">
+                        <h5>Phone</h5>
+                        <p class="mb-0"><a href="tel:+46708417437">+46 70 841 7437</a></p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-12">
+                    <div class="contact-info">
+                        <h5>Location</h5>
+                        <p class="mb-0">Gweru, Zimbabwe</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-12">
                     <div class="payment-info">
-                        <h5>💳 Booking Deposit</h5>
-                        <p>A deposit of 50% is required to confirm your booking. The remaining balance is due 7 days before your session.</p>
-                        <p><strong>Accepted Payment Methods:</strong>Cash, Ecocash, Bank Transfer</p>
+                        <h5>Booking Deposit</h5>
+                        <p>A 50% deposit confirms your booking. The remaining balance is due 7 days before your session.</p>
+                        <p class="mb-0"><strong>Payment methods:</strong> Cash, Ecocash, bank transfer.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    .contact-form {
-        background-color: #f8f9fa;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .form-label {
-        font-weight: 600;
-        margin-bottom: 8px;
-        color: #333;
-    }
-
-    .form-control, .form-select {
-        border-radius: 4px;
-        border: 1px solid #ddd;
-    }
-
-    .form-control:focus, .form-select:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-    }
-
-    .btn-primary {
-        background-color: #0d6efd;
-        border: none;
-        font-weight: 600;
-        transition: background-color 0.3s ease;
-    }
-
-    .btn-primary:hover {
-        background-color: #0b5ed7;
-    }
-
-    .contact-info {
-        background-color: #e7f3ff;
-        padding: 20px;
-        border-radius: 8px;
-        border-left: 4px solid #0d6efd;
-    }
-
-    .contact-info h5 {
-        color: #0d6efd;
-        margin-bottom: 10px;
-    }
-
-    .contact-info p {
-        margin-bottom: 0;
-        color: #555;
-    }
-
-    .contact-info a {
-        color: #0d6efd;
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-    .contact-info a:hover {
-        text-decoration: underline;
-    }
-
-    .payment-info {
-        background-color: #fff3cd;
-        padding: 20px;
-        border-radius: 8px;
-        border-left: 4px solid #ffc107;
-    }
-
-    .payment-info h5 {
-        color: #856404;
-    }
-
-    .payment-info p {
-        color: #856404;
-        margin-bottom: 10px;
-    }
-
-    .payment-info strong {
-        color: #856404;
-    }
-</style>

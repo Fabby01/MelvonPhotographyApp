@@ -4,21 +4,20 @@
     ViewData["Title"] = "Book a Session";
 }
 
-<div class="booking-hero">
-    <div class="container py-5">
-        <h1 class="booking-title">📸 Book Your Photography Session</h1>
-        <p class="booking-subtitle">Choose your service and preferred date - we'll handle the rest</p>
+<section class="booking-hero">
+    <div class="container">
+        <h1 class="booking-title">Book Your Photography Session</h1>
+        <p class="booking-subtitle">Choose your service and preferred date. We'll handle the rest.</p>
     </div>
-</div>
+</section>
 
-<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+<div class="container page-section">
     <div class="row justify-content-center">
         <div class="col-12 col-xl-11">
-            
             @if (!string.IsNullOrEmpty(Model.Message))
             {
-                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 1.5rem;">
-                    <div><strong>✓ Booking Successful!</strong></div>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <div><strong>Booking Successful</strong></div>
                     <div>@Model.Message</div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -26,23 +25,22 @@
 
             @if (!string.IsNullOrEmpty(Model.Error))
             {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 1.5rem;">
-                    <div><strong>✕ Booking Error</strong></div>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <div><strong>Booking Error</strong></div>
                     <div>@Model.Error</div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
 
             <div class="booking-layout">
-                <!-- Calendar Section -->
                 <div class="booking-calendar-section">
                     <div class="calendar-container">
                         <div class="calendar-header">
-                            <button id="prevMonth" class="calendar-nav-btn">&larr;</button>
-                            <h3 id="currentMonth" style="flex: 1; text-align: center; margin: 0; font-size: 1.1rem; font-weight: 600;"></h3>
-                            <button id="nextMonth" class="calendar-nav-btn">&rarr;</button>
+                            <button id="prevMonth" class="calendar-nav-btn" type="button">&larr;</button>
+                            <h3 id="currentMonth" style="flex: 1; text-align: center; margin: 0; font-size: 1.1rem; font-weight: 700;"></h3>
+                            <button id="nextMonth" class="calendar-nav-btn" type="button">&rarr;</button>
                         </div>
-                        
+
                         <div class="calendar-weekdays">
                             <div class="weekday">Sun</div>
                             <div class="weekday">Mon</div>
@@ -72,13 +70,10 @@
                     </div>
                 </div>
 
-                <!-- Booking Form Section -->
                 <div class="booking-form-section">
                     <form method="post" class="booking-form">
-                        
-                        <!-- Contact Information Section -->
                         <div class="form-section">
-                            <h3 class="section-title">👤 Contact Information</h3>
+                            <h3 class="section-title">Contact Information</h3>
                             <div class="form-grid-2">
                                 <div>
                                     <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
@@ -93,16 +88,15 @@
                                 </div>
                             </div>
 
-                            <div style="margin-top: 1rem;">
+                            <div class="mt-3">
                                 <label for="phone" class="form-label">Phone Number <span class="required">*</span></label>
                                 <input type="tel" class="form-control" id="phone" asp-for="Booking.PhoneNumber" placeholder="+46 70 841 7437" required>
                                 <span asp-validation-for="Booking.PhoneNumber" class="text-danger" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
                             </div>
                         </div>
 
-                        <!-- Session Details Section -->
                         <div class="form-section">
-                            <h3 class="section-title">📷 Session Details</h3>
+                            <h3 class="section-title">Session Details</h3>
                             <div>
                                 <label for="serviceType" class="form-label">Service Type <span class="required">*</span></label>
                                 <select class="form-select" id="serviceType" asp-for="Booking.ServiceType" required>
@@ -117,62 +111,54 @@
                                 <span asp-validation-for="Booking.ServiceType" class="text-danger" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
                             </div>
 
-                            <div style="margin-top: 1rem;">
+                            <div class="mt-3">
                                 <label for="preferredDate" class="form-label">Preferred Session Date <span class="required">*</span></label>
                                 <input type="date" class="form-control" id="preferredDate" asp-for="Booking.PreferredDate" required>
                                 <span asp-validation-for="Booking.PreferredDate" class="text-danger" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
-                                <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">⏰ Minimum 7 days in advance</small>
+                                <small style="color: var(--muted); display: block; margin-top: 0.5rem;">Minimum 7 days in advance</small>
                             </div>
                         </div>
 
-                        <!-- Special Requests Section -->
                         <div class="form-section">
-                            <h3 class="section-title">✨ Special Requests</h3>
-                            <label for="specialNotes" class="form-label">Any Special Requests or Ideas?</label>
-                            <textarea class="form-control" id="specialNotes" asp-for="Booking.SpecialNotes" rows="3" placeholder="Tell us about your vision, location preferences, style, or any special details..."></textarea>
+                            <h3 class="section-title">Special Requests</h3>
+                            <label for="specialNotes" class="form-label">Any special requests or ideas?</label>
+                            <textarea class="form-control" id="specialNotes" asp-for="Booking.SpecialNotes" rows="3" placeholder="Tell us about your vision, location preferences, style, or any special details."></textarea>
                         </div>
 
-                        <!-- Submit Button -->
-                        <div style="display: flex; gap: 1rem; margin-top: 2.5rem;">
-                            <button type="submit" class="btn btn-primary" style="flex: 1; min-height: 56px; font-size: 1.1rem;">
-                                ✓ Submit Booking Request
-                            </button>
-                        </div>
+                        <button type="submit" class="btn btn-primary w-100" style="min-height: 56px; font-size: 1.05rem;">
+                            Submit Booking Request
+                        </button>
 
-                        <p style="text-align: center; margin-top: 1.5rem; color: var(--text-secondary); font-size: 0.9rem;">
-                            📧 You'll receive a confirmation email shortly after submitting
+                        <p class="text-center mt-3 mb-0" style="color: var(--muted); font-size: 0.9rem;">
+                            You'll receive a confirmation email shortly after submitting.
                         </p>
                     </form>
                 </div>
             </div>
 
-            <!-- Help Section -->
-            <div class="help-section" style="margin-top: 3rem;">
-                <h4 style="margin-bottom: 1rem; font-size: 1.1rem;">❓ Have Questions?</h4>
-                <p style="margin-bottom: 0;">We're happy to help! <a href="/Contact">Contact us directly</a> if you have any questions about our services, pricing, or availability.</p>
+            <div class="help-section mt-5">
+                <h4 style="margin-bottom: 1rem; font-size: 1.1rem;">Have Questions?</h4>
+                <p class="mb-0">We're happy to help. <a href="/Contact">Contact us directly</a> if you have any questions about services, pricing, or availability.</p>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Get available dates from the server
     const availableDatesStr = '@string.Join(",", Model.AvailableDates.Select(d => d.ToString("yyyy-MM-dd")))';
     const availableDates = new Set(availableDatesStr.split(',').filter(d => d));
 
     let currentDate = new Date();
     const dateInput = document.getElementById('preferredDate');
 
-    // Initialize calendar
     function renderCalendar() {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
-        
-        document.getElementById('currentMonth').textContent = 
+
+        document.getElementById('currentMonth').textContent =
             currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
         const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
         const startDate = new Date(firstDay);
         startDate.setDate(startDate.getDate() - firstDay.getDay());
 
@@ -195,7 +181,6 @@
                 dateDiv.className += ' selected';
             } else if (isAvailable) {
                 dateDiv.className += ' available';
-                dateDiv.style.cursor = 'pointer';
                 dateDiv.addEventListener('click', () => {
                     dateInput.value = dateStr;
                     renderCalendar();
@@ -210,7 +195,6 @@
         }
     }
 
-    // Navigation
     document.getElementById('prevMonth').addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
         renderCalendar();
@@ -221,7 +205,6 @@
         renderCalendar();
     });
 
-    // Update calendar when date input changes
     dateInput.addEventListener('change', () => {
         if (dateInput.value) {
             currentDate = new Date(dateInput.value);
@@ -229,7 +212,6 @@
         }
     });
 
-    // Initial render
     renderCalendar();
 </script>
 

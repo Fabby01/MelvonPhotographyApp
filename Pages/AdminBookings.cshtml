@@ -20,21 +20,21 @@
         : $"https://wa.me/{whatsappPhone}?text={whatsappMessage}";
 }
 
-<div class="admin-header">
+<section class="admin-header">
     <div class="container">
         <div class="admin-header-content">
             <div>
-                <h1>📋 Booking Management Dashboard</h1>
-                <p>Manage all customer bookings and session scheduling</p>
+                <h1>Booking Management</h1>
+                <p>Manage customer bookings and session scheduling.</p>
             </div>
             <form method="post" asp-page-handler="Logout" class="logout-form">
                 <button type="submit" class="btn btn-danger">Sign Out</button>
             </form>
         </div>
     </div>
-</div>
+</section>
 
-<div class="container mt-4 mb-5">
+<div class="container mb-5">
     <div class="admin-stats">
         <div class="stat-card">
             <div class="stat-number">@Model.Bookings.Count</div>
@@ -57,7 +57,7 @@
     @if (!Model.Bookings.Any())
     {
         <div class="alert alert-info">
-            <strong>✨ No bookings yet.</strong> When clients submit booking requests, they will appear here. Refresh the page to see new bookings.
+            <strong>No bookings yet.</strong> When clients submit booking requests, they will appear here.
         </div>
     }
     else
@@ -97,15 +97,15 @@
                             <td data-label="Status">
                                 @if (booking.Status == "Pending")
                                 {
-                                    <span class="status-badge pending">⏳ Pending</span>
+                                    <span class="status-badge pending">Pending</span>
                                 }
                                 else if (booking.Status == "Confirmed")
                                 {
-                                    <span class="status-badge confirmed">✅ Confirmed</span>
+                                    <span class="status-badge confirmed">Confirmed</span>
                                 }
                                 else
                                 {
-                                    <span class="status-badge cancelled">❌ Cancelled</span>
+                                    <span class="status-badge cancelled">Cancelled</span>
                                 }
                             </td>
                             <td data-label="Booked On">@booking.BookingDate.ToString("MMM dd, yyyy")</td>
@@ -114,17 +114,17 @@
                                     @if (booking.Status == "Pending")
                                     {
                                         <form method="post" style="display: inline;">
-                                            <button type="submit" asp-page-handler="Confirm" asp-route-id="@booking.Id" class="btn btn-sm btn-success" title="Confirm booking">✓ Confirm</button>
+                                            <button type="submit" asp-page-handler="Confirm" asp-route-id="@booking.Id" class="btn btn-sm btn-success" title="Confirm booking">Confirm</button>
                                         </form>
                                     }
                                     @if (booking.Status != "Cancelled")
                                     {
                                         <form method="post" style="display: inline;">
-                                            <button type="submit" asp-page-handler="Cancel" asp-route-id="@booking.Id" class="btn btn-sm btn-warning" title="Cancel booking">✗ Cancel</button>
+                                            <button type="submit" asp-page-handler="Cancel" asp-route-id="@booking.Id" class="btn btn-sm btn-warning" title="Cancel booking">Cancel</button>
                                         </form>
                                     }
                                     <form method="post" style="display: inline;">
-                                        <button type="submit" asp-page-handler="Delete" asp-route-id="@booking.Id" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this booking?')" title="Delete permanently">🗑 Delete</button>
+                                        <button type="submit" asp-page-handler="Delete" asp-route-id="@booking.Id" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this booking?')" title="Delete permanently">Delete</button>
                                     </form>
                                 </div>
                             </td>
@@ -134,7 +134,7 @@
                             <tr class="notes-row">
                                 <td colspan="8">
                                     <div class="special-notes">
-                                        <strong>📝 Special Requests:</strong><br/>
+                                        <strong>Special Requests:</strong><br/>
                                         @booking.SpecialNotes
                                     </div>
                                 </td>
@@ -166,7 +166,7 @@
                     {
                         <p>Please contact the customer now to finalize details and inform them the booking is confirmed.</p>
                     }
-                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:0.75rem; font-size:0.92rem;">
+                    <div class="contact-cta">
                         <div><strong>Service:</strong> @popupService</div>
                         <div><strong>Date:</strong> @popupDate</div>
                         <div><strong>Email:</strong> @popupEmail</div>
@@ -201,301 +201,3 @@
         });
     </script>
 }
-
-<style>
-/* Admin Header */
-.admin-header {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: white;
-    padding: 2rem 0;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-}
-
-.admin-header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-}
-
-.admin-header h1 {
-    background: none;
-    -webkit-text-fill-color: unset;
-    background-clip: unset;
-    color: white;
-    margin-bottom: 0.25rem;
-}
-
-.admin-header p {
-    color: rgba(255, 255, 255, 0.9);
-    margin: 0;
-}
-
-.logout-form {
-    display: flex;
-}
-
-/* Admin Stats */
-.admin-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-}
-
-.stat-card {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-    border: 2px solid #0284c7;
-    box-shadow: var(--shadow-md);
-    transition: var(--transition);
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-}
-
-.stat-card.pending {
-    background: linear-gradient(135deg, #fef08a 0%, #fef3c7 100%);
-    border-color: #ca8a04;
-}
-
-.stat-card.confirmed {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    border-color: #059669;
-}
-
-.stat-card.cancelled {
-    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-    border-color: #dc2626;
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--dark-text);
-}
-
-.stat-label {
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-    margin-top: 0.5rem;
-}
-
-/* Bookings Table */
-.bookings-table-wrapper {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--border-color);
-}
-
-.bookings-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.bookings-table thead {
-    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-    border-bottom: 2px solid var(--primary);
-}
-
-.bookings-table th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: var(--dark-text);
-    font-size: 0.9rem;
-}
-
-.bookings-table td {
-    padding: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-secondary);
-}
-
-.bookings-table tbody tr {
-    transition: var(--transition);
-}
-
-.bookings-table tbody tr:hover {
-    background-color: #f8fafc;
-}
-
-.booking-id {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 700;
-    font-size: 1.1rem;
-}
-
-.contact-info {
-    font-size: 0.85rem;
-}
-
-.contact-info a {
-    color: var(--primary);
-    font-weight: 500;
-}
-
-.service-badge {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    color: #0c2d6b;
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 0.85rem;
-}
-
-.status-badge {
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    display: inline-block;
-}
-
-.status-badge.pending {
-    background: #fef08a;
-    color: #92400e;
-    border: 1px solid #ca8a04;
-}
-
-.status-badge.confirmed {
-    background: #d1fae5;
-    color: #065f46;
-    border: 1px solid #10b981;
-}
-
-.status-badge.cancelled {
-    background: #fee2e2;
-    color: #7f1d1d;
-    border: 1px solid #ef4444;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.btn-sm {
-    padding: 0.4rem 0.8rem !important;
-    font-size: 0.8rem !important;
-    border-radius: 6px !important;
-}
-
-.notes-row {
-    background-color: #f8fafc;
-}
-
-.special-notes {
-    padding: 1rem;
-    background: linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%);
-    border-left: 4px solid var(--info);
-    border-radius: 6px;
-    font-size: 0.9rem;
-    color: #0c2d6b;
-}
-
-@@media (max-width: 768px) {
-    .admin-header-content {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .admin-stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.75rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .stat-card {
-        padding: 1rem 0.75rem;
-    }
-
-    .stat-number {
-        font-size: 1.6rem;
-    }
-
-    .bookings-table-wrapper {
-        overflow: visible;
-        border: none;
-        box-shadow: none;
-        background: transparent;
-    }
-
-    .bookings-table,
-    .bookings-table tbody,
-    .bookings-table tr,
-    .bookings-table td {
-        display: block;
-        width: 100%;
-    }
-
-    .bookings-table thead {
-        display: none;
-    }
-
-    .bookings-table .booking-row {
-        background: #fff;
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        margin-bottom: 0.75rem;
-        box-shadow: var(--shadow-sm);
-        overflow: hidden;
-    }
-
-    .bookings-table td {
-        padding: 0.65rem 0.85rem;
-        border-bottom: 1px solid #eef2f7;
-    }
-
-    .bookings-table td:last-child {
-        border-bottom: 0;
-    }
-
-    .bookings-table td::before {
-        content: attr(data-label);
-        display: block;
-        font-size: 0.72rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-        color: #64748b;
-        margin-bottom: 0.2rem;
-    }
-
-    .notes-row {
-        margin-top: -0.35rem;
-        margin-bottom: 0.9rem;
-    }
-
-    .notes-row td::before {
-        content: none;
-    }
-
-    .special-notes {
-        margin: 0 0.4rem 0.4rem;
-    }
-
-    .action-buttons {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 0.45rem;
-    }
-
-    .action-buttons form,
-    .action-buttons .btn {
-        width: 100%;
-    }
-}
-</style>

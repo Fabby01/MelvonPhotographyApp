@@ -4,25 +4,33 @@
     ViewData["Title"] = "Photography Packages";
 }
 
-<div class="container mt-5">
-    <div class="text-center mb-5">
-        <h1>💰 Photography Packages</h1>
-        <p class="lead text-muted">Choose the perfect package for your needs</p>
+<section class="page-hero">
+    <div class="container">
+        <h1>Photography Packages</h1>
+        <p>Simple starting points for portraits, weddings, events, and business photography.</p>
+    </div>
+</section>
+
+<div class="container page-section">
+    <div class="section-heading">
+        <div class="eyebrow">Services</div>
+        <h2>Choose your session</h2>
+        <p class="section-kicker">Each package includes planning, edited high-resolution images, and digital delivery.</p>
     </div>
 
-    <div class="row">
+    <div class="row g-4">
         @foreach (var service in Model.Services)
         {
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card package-card h-100 shadow-sm">
+            <div class="col-md-6 col-lg-3">
+                <div class="card package-card h-100">
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">📸 @service.Name</h5>
+                        <h5 class="card-title">@service.Name</h5>
                         <p class="card-text text-muted flex-grow-1">@service.Description</p>
                         <div class="price-section">
-                            <span class="package-price">${@service.Price}</span>
+                            <span class="package-price">$@service.Price</span>
                         </div>
                     </div>
-                    <div class="card-footer bg-white border-top-0">
+                    <div class="card-footer">
                         <a asp-page="/Booking" class="btn btn-primary btn-sm w-100">Book This Package</a>
                     </div>
                 </div>
@@ -33,7 +41,7 @@
     <div class="row mt-5">
         <div class="col-md-12">
             <div class="info-box">
-                <h4>📋 What's Included?</h4>
+                <h4>What's Included?</h4>
                 <ul>
                     <li>Professional photography session</li>
                     <li>High-resolution edited photos</li>
@@ -44,78 +52,12 @@
         </div>
     </div>
 
-    <div class="row mt-4 mb-5">
+    <div class="row mt-4">
         <div class="col-md-12">
             <div class="contact-cta">
-                <h5>💬 Custom Package?</h5>
-                <p>Don't see what you're looking for? <a href="/Contact">Contact us</a> to discuss a custom package tailored to your needs.</p>
+                <h5>Need a custom package?</h5>
+                <p class="mb-0">Don't see what you're looking for? <a href="/Contact">Contact us</a> to discuss a custom package tailored to your needs.</p>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    .package-card {
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .package-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15) !important;
-    }
-
-    .card-title {
-        color: #333;
-        font-weight: 600;
-    }
-
-    .price-section {
-        text-align: center;
-        margin: 15px 0;
-    }
-
-    .package-price {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #0d6efd;
-    }
-
-    .info-box {
-        background-color: #f8f9fa;
-        padding: 25px;
-        border-radius: 8px;
-        border-left: 4px solid #0d6efd;
-    }
-
-    .info-box ul {
-        list-style: none;
-        padding-left: 0;
-        margin-bottom: 0;
-    }
-
-    .info-box li {
-        padding: 8px 0;
-        color: #555;
-    }
-
-    .info-box li:before {
-        content: "✓ ";
-        color: #28a745;
-        font-weight: bold;
-        margin-right: 8px;
-    }
-
-    .contact-cta {
-        background-color: #e7f3ff;
-        padding: 20px;
-        border-radius: 8px;
-        border-left: 4px solid #0d6efd;
-    }
-
-    .contact-cta a {
-        font-weight: 600;
-        color: #0d6efd;
-    }
-</style>

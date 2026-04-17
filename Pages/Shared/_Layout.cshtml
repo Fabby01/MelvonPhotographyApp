@@ -12,29 +12,32 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white">
+        <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index" style="font-weight: 700; font-size: 1.3rem;">🎨 MRMstudios</a>
+                <a class="navbar-brand d-inline-flex align-items-center" asp-area="" asp-page="/Index">
+                    <span class="brand-mark">MRM</span>
+                    <span>MRMstudios</span>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse justify-content-end">
+                    <ul class="navbar-nav align-items-lg-center">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Index">🏠 Home</a>
+                            <a class="nav-link" asp-area="" asp-page="/Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Packages">💰 Packages</a>
+                            <a class="nav-link" asp-area="" asp-page="/Packages">Packages</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Booking">📅 Book Now</a>
+                            <a class="nav-link" asp-area="" asp-page="/Booking">Book Now</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Contact">📞 Contact</a>
+                            <a class="nav-link" asp-area="" asp-page="/Contact">Contact</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/AdminBookings">⚙️ Admin</a>
+                            <a class="nav-link" asp-area="" asp-page="/AdminBookings">Admin</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-page="/Privacy">Privacy</a>
@@ -49,22 +52,22 @@
         @RenderBody()
     </main>
 
-    <footer class="footer mt-5">
+    <footer class="footer">
         <div class="container">
-            <div class="row py-4">
-                <div class="col-12 col-md-6 mb-3 mb-md-0">
-                    <strong style="font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">MRMstudios</strong>
-                    <p style="margin: 0.5rem 0;">Professional Photography Services</p>
-                    <p style="margin: 0.5rem 0; font-size: 0.9rem;"><a asp-area="" asp-page="/Contact">Contact</a> | <a asp-area="" asp-page="/Privacy">Privacy</a></p>
+            <div class="row g-4">
+                <div class="col-12 col-md-6">
+                    <strong class="d-block mb-2">MRMstudios</strong>
+                    <p class="mb-2">Professional photography for weddings, portraits, events, and brand moments.</p>
+                    <p class="mb-0"><a asp-area="" asp-page="/Contact">Contact</a> · <a asp-area="" asp-page="/Privacy">Privacy</a></p>
                 </div>
                 <div class="col-12 col-md-6">
-                    <strong style="font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">Get in Touch</strong>
-                    <p style="margin: 0.5rem 0;">📧 <a href="mailto:mel.dimplz@gmail.com">mel.dimplz@gmail.com</a></p>
-                    <p style="margin: 0.5rem 0;">📱 <a href="tel:+46708417437">+46 70 841 7437</a></p>
+                    <strong class="d-block mb-2">Get in Touch</strong>
+                    <p class="mb-2"><a href="mailto:mel.dimplz@gmail.com">mel.dimplz@gmail.com</a></p>
+                    <p class="mb-0"><a href="tel:+46708417437">+46 70 841 7437</a></p>
                 </div>
             </div>
-            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 1.5rem; text-align: center; font-size: 0.9rem; opacity: 0.8;">
-                &copy; 2026 MRMstudios. All rights reserved.
+            <div class="pt-4 mt-4 text-center" style="border-top: 1px solid rgba(255, 255, 255, 0.12);">
+                <small>&copy; 2026 MRMstudios. All rights reserved.</small>
             </div>
         </div>
     </footer>
