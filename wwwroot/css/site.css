@@ -809,6 +809,20 @@ p {
     gap: 0.75rem;
 }
 
+.admin-header .btn-outline-primary,
+.admin-header .btn-outline-secondary {
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.admin-header .btn-outline-primary:hover,
+.admin-header .btn-outline-secondary:hover,
+.admin-header .btn-outline-primary:focus,
+.admin-header .btn-outline-secondary:focus {
+    background: rgba(255, 255, 255, 0.14) !important;
+    color: #fff !important;
+}
+
 .logout-form {
     margin: 0;
 }
