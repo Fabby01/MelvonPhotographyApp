@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IContentService, ContentService>();
+builder.Services.AddScoped<IEmailSettingsService, EmailSettingsService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Add session support for admin authentication

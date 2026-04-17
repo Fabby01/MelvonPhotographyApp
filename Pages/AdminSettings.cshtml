@@ -114,6 +114,59 @@
             </div>
         </div>
     </div>
+
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Email Settings</h5>
+                    <form method="post" asp-page-handler="SaveEmailSettings">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" for="EmailSettings_SmtpHost">SMTP Host</label>
+                                <input asp-for="EmailSettings.SmtpHost" class="form-control" id="EmailSettings_SmtpHost" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" for="EmailSettings_SmtpPort">SMTP Port</label>
+                                <input asp-for="EmailSettings.SmtpPort" class="form-control" id="EmailSettings_SmtpPort" type="number" min="1" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" for="EmailSettings_EnableSsl">Use SSL</label>
+                                <select asp-for="EmailSettings.EnableSsl" class="form-select" id="EmailSettings_EnableSsl">
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="EmailSettings_SmtpUser">SMTP Username</label>
+                                <input asp-for="EmailSettings.SmtpUser" class="form-control" id="EmailSettings_SmtpUser" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="EmailSettings_SmtpPass">SMTP Password</label>
+                                <input asp-for="EmailSettings.SmtpPass" class="form-control" id="EmailSettings_SmtpPass" type="password" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="EmailSettings_FromAddress">From Address</label>
+                                <input asp-for="EmailSettings.FromAddress" class="form-control" id="EmailSettings_FromAddress" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="EmailSettings_FromName">From Name</label>
+                                <input asp-for="EmailSettings.FromName" class="form-control" id="EmailSettings_FromName" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="EmailSettings_OwnerEmail">Admin Notification Email</label>
+                                <input asp-for="EmailSettings.OwnerEmail" class="form-control" id="EmailSettings_OwnerEmail" />
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">Save Email Settings</button>
+                            <button type="submit" asp-page-handler="SendTestEmail" class="btn btn-outline-secondary">Send Test Notification</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>

@@ -13,14 +13,15 @@ namespace MRMstudios.Services
 
     public class EmailService : IEmailService
     {
-        private readonly string _ownerEmail = "mel.dimplz@gmail.com";
         private readonly ILogger<EmailService> _logger;
         private readonly IConfiguration _configuration;
+        private readonly IEmailSettingsService _emailSettingsService;
 
-        public EmailService(ILogger<EmailService> logger, IConfiguration configuration)
+        public EmailService(ILogger<EmailService> logger, IConfiguration configuration, IEmailSettingsService emailSettingsService)
         {
             _logger = logger;
             _configuration = configuration;
+            _emailSettingsService = emailSettingsService;
         }
 
         public async Task<bool> SendBookingConfirmationAsync(string clientEmail, string clientName, int bookingId, 
@@ -176,7 +177,8 @@ namespace MRMstudios.Services
                     </html>
                 ";
 
-                return await SendEmailAsync(_ownerEmail, subject, body);
+                var emailSettings = await _emailSettingsService.GetSettingsAsync();
+                return await SendEmailAsync(emailSettings.OwnerEmail, subject, body);
             }
             catch (Exception ex)
             {
@@ -193,25 +195,19 @@ namespace MRMstudios.Services
             _logger.LogInformation($"Subject: {subject}");
 
             // Read SMTP settings from configuration / environment
-            var smtpHost = _configuration["Email:SmtpHost"]; // e.g. smtp.sendgrid.net or smtp.gmail.com
-            var smtpPortString = _configuration["Email:SmtpPort"]; // e.g. 587
-            var smtpUser = _configuration["Email:SmtpUser"]; // username or API key
-            var smtpPass = _configuration["Email:SmtpPass"]; // password or API key
-            var fromAddress = _configuration["Email:FromAddress"] ?? _ownerEmail;
-            var fromName = _configuration["Email:FromName"] ?? "MRMstudios";
-            var enableSsl = (_configuration["Email:EnableSsl"] ?? "true").ToLower() == "true";
+            var emailSettings = await _emailSettingsService.GetSettingsAsync();
+            var smtpHost = emailSettings.SmtpHost;
+            var smtpPort = emailSettings.SmtpPort;
+            var smtpUser = emailSettings.SmtpUser;
+            var smtpPass = emailSettings.SmtpPass;
+            var fromAddress = emailSettings.FromAddress;
+            var fromName = emailSettings.FromName;
+            var enableSsl = emailSettings.EnableSsl;
 
             // If SMTP not configured, skip actual sending but return success (email logged)
-            if (string.IsNullOrWhiteSpace(smtpHost) || string.IsNullOrWhiteSpace(smtpPortString))
+            if (string.IsNullOrWhiteSpace(smtpHost) || smtpPort <= 0)
             {
-                _logger.LogWarning("SMTP not configured (Email:SmtpHost or Email:SmtpPort missing). Email was logged but not sent.");
-                _logger.LogInformation("================================\n");
-                return false;
-            }
-
-            if (!int.TryParse(smtpPortString, out var smtpPort))
-            {
-                _logger.LogWarning($"Invalid SMTP port '{smtpPortString}'. Email was logged but not sent.");
+                _logger.LogWarning("SMTP not configured (missing host or port). Email was logged but not sent.");
                 _logger.LogInformation("================================\n");
                 return false;
             }

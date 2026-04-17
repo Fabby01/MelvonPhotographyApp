@@ -8,15 +8,21 @@ namespace MRMstudios.Pages
     public class AdminSettingsModel : PageModel
     {
         private readonly IContentService _contentService;
+        private readonly IEmailSettingsService _emailSettingsService;
+        private readonly IEmailService _emailService;
         private readonly ILogger<AdminSettingsModel> _logger;
 
-        public AdminSettingsModel(IContentService contentService, ILogger<AdminSettingsModel> logger)
+        public AdminSettingsModel(IContentService contentService, IEmailSettingsService emailSettingsService, IEmailService emailService, ILogger<AdminSettingsModel> logger)
         {
             _contentService = contentService;
+            _emailSettingsService = emailSettingsService;
+            _emailService = emailService;
             _logger = logger;
         }
 
         public List<Service> Services { get; set; } = new();
+        [BindProperty]
+        public EmailSettings EmailSettings { get; set; } = new();
         public string? Message { get; set; }
         public string? Error { get; set; }
 
@@ -31,6 +37,7 @@ namespace MRMstudios.Pages
             }
 
             Services = await _contentService.GetServicesAsync();
+            EmailSettings = await _emailSettingsService.GetSettingsAsync();
             return Page();
         }
 
@@ -139,6 +146,77 @@ namespace MRMstudios.Pages
             }
 
             Services = await _contentService.GetServicesAsync();
+            EmailSettings = await _emailSettingsService.GetSettingsAsync();
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostSaveEmailSettingsAsync()
+        {
+            if (HttpContext.Session.GetString("AdminAuthenticated") != "true")
+            {
+                return RedirectToPage("/AdminLogin");
+            }
+
+            if (string.IsNullOrWhiteSpace(EmailSettings.SmtpHost) || EmailSettings.SmtpPort <= 0)
+            {
+                Error = "Please enter valid SMTP host and port values.";
+                Services = await _contentService.GetServicesAsync();
+                EmailSettings = await _emailSettingsService.GetSettingsAsync();
+                return Page();
+            }
+
+            try
+            {
+                await _emailSettingsService.SaveSettingsAsync(EmailSettings);
+                Message = "Email settings saved successfully.";
+            }
+            catch (Exception ex)
+            {
+                Error = $"Error saving email settings: {ex.Message}";
+                _logger.LogError(ex, "Error saving email settings");
+            }
+
+            Services = await _contentService.GetServicesAsync();
+            EmailSettings = await _emailSettingsService.GetSettingsAsync();
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostSendTestEmailAsync()
+        {
+            if (HttpContext.Session.GetString("AdminAuthenticated") != "true")
+            {
+                return RedirectToPage("/AdminLogin");
+            }
+
+            try
+            {
+                await _emailSettingsService.SaveSettingsAsync(EmailSettings);
+                var settings = await _emailSettingsService.GetSettingsAsync();
+                var sent = await _emailService.SendBookingNotificationToOwnerAsync(
+                    "Test User",
+                    "test@example.com",
+                    "+0000000000",
+                    "Test Booking",
+                    DateTime.Now.AddDays(7),
+                    "This is a test message.");
+
+                if (sent)
+                {
+                    Message = "Test email sent successfully to the configured admin address.";
+                }
+                else
+                {
+                    Error = "Test email failed. Check SMTP settings and server connectivity.";
+                }
+            }
+            catch (Exception ex)
+            {
+                Error = $"Error sending test email: {ex.Message}";
+                _logger.LogError(ex, "Error sending test email");
+            }
+
+            Services = await _contentService.GetServicesAsync();
+            EmailSettings = await _emailSettingsService.GetSettingsAsync();
             return Page();
         }
     }
