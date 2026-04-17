@@ -1,0 +1,271 @@
+@page
+@model MRMstudios.Pages.BookingConfirmationModel
+@{
+    ViewData["Title"] = "Booking Confirmed";
+}
+
+<section class="confirmation-hero">
+    <div class="container">
+        <div class="confirmation-content">
+            <div class="confirmation-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
+                </svg>
+            </div>
+            <h1>Booking Confirmed!</h1>
+            <p class="subtitle">Your photography session has been submitted successfully.</p>
+        </div>
+    </div>
+</section>
+
+<div class="container page-section">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <!-- Booking Details Card -->
+            <div class="card confirmation-card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Your Booking Details</h5>
+                    
+                    <div class="booking-detail-grid">
+                        <div class="detail-item">
+                            <label>Booking Reference</label>
+                            <p class="detail-value">@Model.Booking.Id</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Service</label>
+                            <p class="detail-value">@Model.Booking.ServiceType</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Session Date</label>
+                            <p class="detail-value">@Model.Booking.PreferredDate.ToString("MMMM dd, yyyy")</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Price</label>
+                            <p class="detail-value">$@Model.ServicePrice</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="booking-detail-grid">
+                        <div class="detail-item full-width">
+                            <label>Your Name</label>
+                            <p class="detail-value">@Model.Booking.FullName</p>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Email Address</label>
+                            <p class="detail-value">@Model.Booking.Email</p>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Phone Number</label>
+                            <p class="detail-value">@Model.Booking.PhoneNumber</p>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.Booking.SpecialNotes))
+                        {
+                            <div class="detail-item full-width">
+                                <label>Special Notes</label>
+                                <p class="detail-value">@Model.Booking.SpecialNotes</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="card next-steps-card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">What's Next?</h5>
+                    <ol class="steps-list">
+                        <li>
+                            <strong>Confirmation Email</strong>
+                            <p>We've sent a confirmation email to <strong>@Model.Booking.Email</strong> with your booking details.</p>
+                        </li>
+                        <li>
+                            <strong>We'll Be in Touch</strong>
+                            <p>Our team will contact you within 24 hours to confirm the session and discuss any details.</p>
+                        </li>
+                        <li>
+                            <strong>Pre-Session Planning</strong>
+                            <p>We'll work with you to plan the location, timing, and any special requests for your session.</p>
+                        </li>
+                        <li>
+                            <strong>Session & Delivery</strong>
+                            <p>After your session, we'll edit and deliver your high-resolution photos within 5-7 business days.</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="info-section">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="info-box">
+                            <h6>Questions?</h6>
+                            <p>If you have any questions about your booking, feel free to <a href="/Contact">contact us</a> or reply to the confirmation email.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-box">
+                            <h6>Booking Reference</h6>
+                            <p class="reference-code">@Model.Booking.Id</p>
+                            <small>Keep this for your records</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="confirmation-cta">
+                <a href="/" class="btn btn-primary">Back to Home</a>
+                <a href="/Packages" class="btn btn-outline-primary">View More Services</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.confirmation-hero {
+    background: linear-gradient(135deg, #18231f 0%, #1f6f5b 100%);
+    color: white;
+    padding: 4rem 0;
+    margin-bottom: 3rem;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.confirmation-hero h1 {
+    color: white;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+}
+
+.confirmation-hero .subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.confirmation-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: #ffd700;
+}
+
+.confirmation-card {
+    border: 1px solid var(--line) !important;
+    box-shadow: var(--shadow-sm);
+}
+
+.booking-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.detail-item {
+    padding: 1rem;
+    background: var(--paper);
+    border-radius: var(--radius);
+}
+
+.detail-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-item label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.detail-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0;
+}
+
+.next-steps-card {
+    border: 1px solid #e8f5e9 !important;
+    background: #f1f8f5;
+}
+
+.steps-list {
+    list-style: decimal;
+    padding-left: 2rem;
+}
+
+.steps-list li {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.steps-list strong {
+    color: var(--brand);
+    font-size: 1rem;
+}
+
+.info-section {
+    margin-bottom: 2rem;
+}
+
+.info-box {
+    padding: 1.5rem;
+    background: var(--paper);
+    border-radius: var(--radius);
+    border-left: 4px solid var(--brand);
+}
+
+.info-box h6 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+}
+
+.info-box p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.reference-code {
+    display: block;
+    font-family: 'Courier New', monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--brand);
+    margin-top: 0.5rem;
+}
+
+.confirmation-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    .confirmation-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .confirmation-cta {
+        flex-direction: column;
+    }
+    
+    .confirmation-cta .btn {
+        width: 100%;
+    }
+}
+</style>

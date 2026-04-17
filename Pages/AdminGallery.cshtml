@@ -1,0 +1,382 @@
+@page
+@model MRMstudios.Pages.AdminGalleryModel
+@{
+    ViewData["Title"] = "Manage Media";
+}
+
+<section class="admin-header">
+    <div class="container">
+        <div class="admin-header-content">
+            <div>
+                <h1>Media Management</h1>
+                <p>Manage your portfolio, backgrounds, and section photos.</p>
+            </div>
+            <div class="admin-actions">
+                <a href="/AdminBookings" class="btn btn-outline-primary">Back to Admin</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container page-section">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> @Model.Message
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error</strong> @Model.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Tabs Navigation -->
+    <div class="gallery-tabs mb-4">
+        <button class="gallery-tab-btn active" onclick="switchTab('portfolio')">Portfolio Gallery</button>
+        <button class="gallery-tab-btn" onclick="switchTab('hero')">Hero Background</button>
+        <button class="gallery-tab-btn" onclick="switchTab('about')">About Section Photo</button>
+        <button class="gallery-tab-btn" onclick="switchTab('services')">Services Hero Background</button>
+    </div>
+
+    <!-- Portfolio Section -->
+    <div id="portfolio" class="gallery-tab-content active">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Portfolio Gallery</h5>
+                        <p class="text-muted mb-4">Upload and manage images in your main portfolio gallery.</p>
+
+                        <form method="post" asp-page-handler="Upload" enctype="multipart/form-data" class="upload-form">
+                            <div class="mb-3">
+                                <label for="fileUpload" class="form-label">Choose Image <span class="required">*</span></label>
+                                <input type="file" class="form-control" id="fileUpload" name="file" accept="image/*" required>
+                                <input type="hidden" name="section" value="portfolio">
+                                <small class="form-text text-muted">JPG, PNG, GIF, WEBP (Max 10MB)</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload Photo</button>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <h6 class="mb-3">Current Images (@Model.PortfolioImages.Count)</h6>
+                        @if (Model.PortfolioImages.Count == 0)
+                        {
+                            <p class="text-muted">No portfolio images yet.</p>
+                        }
+                        else
+                        {
+                            <div class="gallery-preview-grid">
+                                @foreach (var image in Model.PortfolioImages)
+                                {
+                                    <div class="gallery-preview-item">
+                                        <img src="@image.Src" alt="@image.Caption" class="gallery-preview-img">
+                                        <div class="gallery-preview-info">
+                                            <p>@image.Caption</p>
+                                            <form method="post" asp-page-handler="Delete" style="display: inline;">
+                                                <input type="hidden" name="imageUrl" value="@image.Src">
+                                                <input type="hidden" name="section" value="portfolio">
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this image?');">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Tips</h6>
+                        <ul class="small tips-list">
+                            <li>Upload high-resolution images (1200x1000px or larger)</li>
+                            <li>Order matters - newest uploads appear first</li>
+                            <li>Use descriptive captions</li>
+                            <li>These images are visible to everyone</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Background Section -->
+    <div id="hero" class="gallery-tab-content">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Hero Section Background</h5>
+                        <p class="text-muted mb-4">Set the background image for your homepage hero section.</p>
+
+                        <form method="post" asp-page-handler="Upload" enctype="multipart/form-data" class="upload-form">
+                            <div class="mb-3">
+                                <label for="heroBg" class="form-label">Choose Background Image <span class="required">*</span></label>
+                                <input type="file" class="form-control" id="heroBg" name="file" accept="image/*" required>
+                                <input type="hidden" name="section" value="hero">
+                                <small class="form-text text-muted">Recommended: 1920x1080px or wider</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload Background</button>
+                        </form>
+
+                        <hr class="my-4">
+
+                        @if (Model.SectionPhotos.ContainsKey("hero") && Model.SectionPhotos["hero"] != null)
+                        {
+                            <h6 class="mb-3">Current Background</h6>
+                            <div class="section-preview">
+                                <img src="@Model.SectionPhotos["hero"].Src" alt="Hero Background" class="section-preview-img">
+                            </div>
+
+                            <form method="post" asp-page-handler="Delete" class="mt-3">
+                                <input type="hidden" name="imageUrl" value="@Model.SectionPhotos["hero"].Src">
+                                <input type="hidden" name="section" value="hero">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Remove this background?');">Remove</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No background set yet.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Preview</h6>
+                        <div class="hero-preview">
+                            @if (Model.SectionPhotos.ContainsKey("hero") && Model.SectionPhotos["hero"] != null)
+                            {
+                                <img src="@Model.SectionPhotos["hero"].Src" alt="Hero Preview" style="width: 100%; border-radius: 8px;">
+                                <p class="small mt-2">Updated: @Model.SectionPhotos["hero"].UpdatedAt.ToString("MMM dd, yyyy")</p>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Hero background preview will appear here</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section Photo -->
+    <div id="about" class="gallery-tab-content">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">About Section Photo</h5>
+                        <p class="text-muted mb-4">Set photos for the About section on your homepage.</p>
+
+                        <form method="post" asp-page-handler="Upload" enctype="multipart/form-data" class="upload-form">
+                            <div class="mb-3">
+                                <label for="aboutPhoto" class="form-label">Choose Photo <span class="required">*</span></label>
+                                <input type="file" class="form-control" id="aboutPhoto" name="file" accept="image/*" required>
+                                <input type="hidden" name="section" value="about">
+                                <small class="form-text text-muted">JPG, PNG (Recommended: 600x700px)</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload Photo</button>
+                        </form>
+
+                        <hr class="my-4">
+
+                        @if (Model.SectionPhotos.ContainsKey("about") && Model.SectionPhotos["about"] != null)
+                        {
+                            <h6 class="mb-3">Current Photo</h6>
+                            <div class="section-preview">
+                                <img src="@Model.SectionPhotos["about"].Src" alt="About Photo" class="section-preview-img">
+                            </div>
+
+                            <form method="post" asp-page-handler="Delete" class="mt-3">
+                                <input type="hidden" name="imageUrl" value="@Model.SectionPhotos["about"].Src">
+                                <input type="hidden" name="section" value="about">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Remove this photo?');">Remove</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No photo set yet.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services Background -->
+    <div id="services" class="gallery-tab-content">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Services Section Background</h5>
+                        <p class="text-muted mb-4">Set the background for the services/packages section.</p>
+
+                        <form method="post" asp-page-handler="Upload" enctype="multipart/form-data" class="upload-form">
+                            <div class="mb-3">
+                                <label for="servicesBg" class="form-label">Choose Background Image <span class="required">*</span></label>
+                                <input type="file" class="form-control" id="servicesBg" name="file" accept="image/*" required>
+                                <input type="hidden" name="section" value="services">
+                                <small class="form-text text-muted">Recommended: 1920x1080px or wider</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload Background</button>
+                        </form>
+
+                        <hr class="my-4">
+
+                        @if (Model.SectionPhotos.ContainsKey("services") && Model.SectionPhotos["services"] != null)
+                        {
+                            <h6 class="mb-3">Current Background</h6>
+                            <div class="section-preview">
+                                <img src="@Model.SectionPhotos["services"].Src" alt="Services Background" class="section-preview-img">
+                            </div>
+
+                            <form method="post" asp-page-handler="Delete" class="mt-3">
+                                <input type="hidden" name="imageUrl" value="@Model.SectionPhotos["services"].Src">
+                                <input type="hidden" name="section" value="services">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Remove this background?');">Remove</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No background set yet.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.gallery-tabs {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 2px solid var(--line);
+    flex-wrap: wrap;
+}
+
+.gallery-tab-btn {
+    padding: 0.75rem 1.25rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--muted);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    margin-bottom: -2px;
+}
+
+.gallery-tab-btn:hover {
+    color: var(--ink);
+}
+
+.gallery-tab-btn.active {
+    color: var(--brand);
+    border-bottom-color: var(--brand);
+}
+
+.gallery-tab-content {
+    display: none;
+}
+
+.gallery-tab-content.active {
+    display: block;
+}
+
+.gallery-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.gallery-preview-item {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: box-shadow var(--transition);
+}
+
+.gallery-preview-item:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.gallery-preview-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+.gallery-preview-info {
+    padding: 0.75rem;
+    background: var(--paper);
+}
+
+.gallery-preview-info p {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.85rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.section-preview {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    max-height: 400px;
+}
+
+.section-preview-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.upload-form {
+    background: var(--paper);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+}
+
+.tips-list {
+    list-style-position: inside;
+    line-height: 1.8;
+}
+
+.tips-list li {
+    margin-bottom: 0.5rem;
+}
+</style>
+
+<script>
+function switchTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.gallery-tab-content').forEach(el => {
+        el.classList.remove('active');
+    });
+
+    // Remove active class from all buttons
+    document.querySelectorAll('.gallery-tab-btn').forEach(el => {
+        el.classList.remove('active');
+    });
+
+    // Show selected tab
+    document.getElementById(tabName).classList.add('active');
+
+    // Add active class to clicked button
+    event.target.classList.add('active');
+}
+</script>

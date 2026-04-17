@@ -116,9 +116,8 @@ namespace MRMstudios.Pages
                     }
                 });
 
-                Message = $"Booking submitted successfully. Confirmation ID: {bookingId}. We'll contact you shortly.";
-                Booking = new();
-                return Page();
+                // Redirect to confirmation page
+                return RedirectToPage("/BookingConfirmation", new { id = bookingId });
             }
             catch (Exception ex)
             {
